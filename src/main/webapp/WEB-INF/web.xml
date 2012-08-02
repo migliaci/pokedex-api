@@ -7,7 +7,7 @@
 	<servlet>
 		<servlet-name>scalatra</servlet-name>
 		<servlet-class>
-			net.srirangan.MyScalatraServlet
+			com.ign.pokedex.MyScalatraServlet
 		</servlet-class>
 	</servlet>
 	

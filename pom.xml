@@ -4,8 +4,8 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
      
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.srirangan</groupId>
-  <artifactId>scalatra-maven-prototype</artifactId>
+  <groupId>com.ign.pokedex</groupId>
+  <artifactId>pokedex</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
 
@@ -15,7 +15,7 @@
   </properties>
   
   <build>
-    <finalName>scalatra-maven-prototype</finalName>
+    <finalName>pokedex</finalName>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>

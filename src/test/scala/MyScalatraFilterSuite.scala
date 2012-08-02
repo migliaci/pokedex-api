@@ -1,4 +1,4 @@
-package net.srirangan
+package com.ign.pokedex
 
 import org.scalatra._
 import org.scalatra.test.scalatest._

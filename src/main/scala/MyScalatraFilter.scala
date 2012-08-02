@@ -1,4 +1,4 @@
-package net.srirangan
+package com.ign.pokedex
 
 import org.scalatra._
 import java.net.URL

@@ -1,4 +1,4 @@
-package net.srirangan
+package com.ign.pokedex
 
 /**
  * Created with IntelliJ IDEA.
