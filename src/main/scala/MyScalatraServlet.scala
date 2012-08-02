@@ -14,6 +14,7 @@ import scalate.ScalateSupport
 import java.io.PrintWriter
 import scala.util.parsing.json.JSONObject
 import com.mongodb.casbah.Imports._
+import com.mongodb.util.JSON
 
 class MyScalatraServlet extends ScalatraServlet {
 
@@ -42,7 +43,11 @@ class MyScalatraServlet extends ScalatraServlet {
   get("/somejson") {
 
     response.setContentType("application/json");
-
+    println( "Hello Unova!" )
+    println( "Here we go! ")
+    val json = connectToDB()
+    println( "Bai" )
+    response.getWriter().write(json);
 
 
   }
@@ -51,9 +56,9 @@ class MyScalatraServlet extends ScalatraServlet {
 
     println( "Hello Unova!" )
     println( "Here we go! ")
-    connectToDB()
+    val json = connectToDB()
     println( "Bai" )
-    //response.getWriter().write(json.toString());
+    response.getWriter().write(json);
 
     <html>
       <body>
@@ -129,17 +134,20 @@ class MyScalatraServlet extends ScalatraServlet {
     m.drop();
   }
 
-  def connectToDB() {
+  def connectToDB() :String =  {
     val mongoColl = MongoConnection()("pokedex")("test_data")
+    var returnedItem =""
 
     //save to the DB
     mongoColl += this.getTestObject()
     mongoColl.find()
 
     val q = MongoDBObject("pokemonId" -> "001BulbasaurV")
-    for (x <- mongoColl.find(q)) println(x)//returnedItem = x //println(x);
+    for (x <- mongoColl.find(q)) returnedItem = JSON.serialize(x)//println(x)
 
     cleanupDB(mongoColl)
+     return returnedItem;
+
   }
 
 }
