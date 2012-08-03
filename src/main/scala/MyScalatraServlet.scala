@@ -57,7 +57,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
   get("/pokemon/:name"){
     response.setContentType("application/json")
-    val name:String = params.getOrElse("name", halt(400))
+    val name:String = params.get("name")
     val pokeColl = MongoConnection()("pokedex")("pokedex_data")
     val p = MongoDBObject("metadata.name" -> name)
     pokeColl.findOne(p).foreach { x =>
@@ -68,7 +68,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
   get("/pokemon/:name/generation/:generation"){
     response.setContentType("application/json")
-    val name:String = params.get("name")
+    val name:String = params.getOrElse("name", halt(400))
     val generation:Int = params.getOrElse("generation", "5").toInt
     val pokeColl = MongoConnection()("pokedex")("pokedex_data")
     val p = MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation)

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b6976e3f-d4c4-4281-ab5c-f95830df569d" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" afterPath="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" />
     </list>
     <ignored path="scalatra-maven-prototype.iws" />
@@ -63,8 +64,10 @@
       <file leaf-file-name="MyScalatraServlet.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="33" selection-start="1725" selection-end="1725" vertical-scroll-proportion="2.871287">
-              <folding />
+            <state line="55" column="28" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0990099">
+              <folding>
+                <element signature="e#184#205#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -597,8 +600,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="33" selection-start="1725" selection-end="1725" vertical-scroll-proportion="2.871287">
-          <folding />
+        <state line="55" column="28" selection-start="1322" selection-end="1322" vertical-scroll-proportion="0.0990099">
+          <folding>
+            <element signature="e#184#205#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
