@@ -41,7 +41,7 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
   get("/pokemon/all/:size"){
-    val size:Int = params.getOrElse("size", "1").toInt
+    val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
     val pokeColl = MongoConnection()("pokedex")("pokedex_data")
     val q  = MongoDBObject.empty
