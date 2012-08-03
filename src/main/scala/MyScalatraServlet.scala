@@ -15,6 +15,7 @@ import java.io.PrintWriter
 import scala.util.parsing.json.JSONObject
 import com.mongodb.casbah.Imports._
 import com.mongodb.util.JSON
+import javax.servlet.http.HttpServletResponse
 
 class MyScalatraServlet extends ScalatraServlet {
 
@@ -45,10 +46,20 @@ class MyScalatraServlet extends ScalatraServlet {
     response.setContentType("application/json");
     println( "Hello Unova!" )
     println( "Here we go! ")
-    val json = connectToDB()
+    val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response);
     println( "Bai" )
     response.getWriter().write(json);
 
+
+  }
+
+  get("/moves") {
+    response.setContentType("application/json");
+    println( "Move Time!" )
+    println( "Here we go! ")
+    //val json = connectToDB("moveId", "001", "move", response)
+    connectToDB_Multiple("moveId", "001", "move", response)
+    println( "Bai" )
 
   }
 
@@ -56,7 +67,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
     println( "Hello Unova!" )
     println( "Here we go! ")
-    val json = connectToDB()
+    val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response)
     println( "Bai" )
     response.getWriter().write(json);
 
@@ -80,29 +91,11 @@ class MyScalatraServlet extends ScalatraServlet {
         <h1>NOT found</h1>
       </body>
     </html>
-    // Try to render a ScalateTemplate if no route matched
-    /*
-    findTemplate(requestPath) map { path =>
-      contentType = "text/html"
-      layoutTemplate(path)
-    } orElse serveStaticResource() getOrElse resourceNotFound()
-    */
+
   }
 
 
-  //clear database
-  //create database
-  //add stuff
-  //delete stuff
-  //start mapping out teh pokemans
-
-  def getTestObject(): MongoDBObject = {
-
-    /*
-    val builder = MongoDBObject.newBuilder
-    builder += "pokemonId" -> "001BulbasaurV"
-    val newObj = builder.result
-    */
+  def getTestPokemon(): MongoDBObject = {
 
     val objectToReturn = MongoDBObject(
       "pokemonId" -> "001BulbasaurV",
@@ -130,23 +123,110 @@ class MyScalatraServlet extends ScalatraServlet {
     return objectToReturn
   }
 
+  def getTestMove(): MongoDBObject = {
+
+    val objectToReturn = MongoDBObject(
+      "moveId" -> "001",
+      "metadata" -> MongoDBObject(
+        "name" -> "Hyper Beam",
+        "category"->"Special",
+        "power"->100,
+        "accuracy"->75,
+        "pp"->10,
+        "maxpp"->20,
+        "introducedInGeneration"->1,
+        "description"->"I PWN YOU.")
+    )
+    return objectToReturn
+  }
+
+  def getTestMove2(): MongoDBObject = {
+
+    val objectToReturn = MongoDBObject(
+      "moveId" -> "002",
+      "metadata" -> MongoDBObject(
+        "name" -> "Fire Blast",
+        "category"->"Special",
+        "power"->200,
+        "accuracy"->55,
+        "pp"->5,
+        "maxpp"->10,
+        "introducedInGeneration"->1,
+        "description"->"YOGA FIRE!")
+    )
+    return objectToReturn
+  }
+
   def cleanupDB(m: MongoCollection) = {
     m.drop();
   }
 
-  def connectToDB() :String =  {
+  def connectToDB(obj_id: String, obj_val: String, obj_type: String, response: HttpServletResponse) :String =  {
     val mongoColl = MongoConnection()("pokedex")("test_data")
     var returnedItem =""
 
     //save to the DB
-    mongoColl += this.getTestObject()
+
+    if (obj_type == "pokemon"){
+      mongoColl += this.getTestPokemon()
+    } else if (obj_type == "move") {
+      mongoColl += this.getTestMove()
+    }
+
     mongoColl.find()
 
-    val q = MongoDBObject("pokemonId" -> "001BulbasaurV")
+
+
+    val q = MongoDBObject(obj_id -> obj_val)
     for (x <- mongoColl.find(q)) returnedItem = JSON.serialize(x)//println(x)
 
     cleanupDB(mongoColl)
      return returnedItem;
+
+  }
+
+  def connectToDB_Multiple(obj_id: String, obj_val: String, obj_type: String, response: HttpServletResponse)  {
+    val mongoColl = MongoConnection()("pokedex")("test_data")
+    var returnedItem =""
+
+    //save to the DB
+    mongoColl += this.getTestMove()
+    mongoColl += this.getTestMove2()
+    mongoColl.find()
+
+    var count = 0
+
+    //val q = "moveId" $exists true
+    //val q = MongoDBObject("moveId" -> "001")
+
+    //can use MongoDB query logic inside of MongoDBObject constructor
+    val q = MongoDBObject("metadata.category"->"Special")
+
+    for (x <- mongoColl.find(q))
+    {
+      println("count " + count)
+      if (count == 0){
+         returnedItem += ("[" + JSON.serialize(x) + ",")
+         println("Current returned item: " + returnedItem)
+      }else {
+        returnedItem += JSON.serialize(x) + ","
+        println("Current returned item: " + returnedItem)
+      }
+
+      count+=1;
+    }
+
+    if(returnedItem != "")  {
+    returnedItem = returnedItem.substring(0, returnedItem.length-1)
+    returnedItem += "]";
+    }
+
+
+    cleanupDB(mongoColl)
+
+    println(returnedItem)
+    response.getWriter.write(returnedItem)
+
 
   }
 
