@@ -41,14 +41,52 @@ class MyScalatraServlet extends ScalatraServlet {
     </p>
   }
 
+  get("/pokemon/all/:size"){
+    val size:Int = params.getOrElse("size", "20").toInt
+    response.setContentType("application/json")
+    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val q  = MongoDBObject.empty
+    val fields = MongoDBObject("metadata.name" -> 1)
+    response.getWriter.write('[')
+    for (x <- pokeColl.find(q, fields).limit(size)) {
+      response.getWriter.write(JSON.serialize(x))
+
+    }
+    response.getWriter.write(']')
+  }
+
+  get("/pokemon/:name"){
+    response.setContentType("application/json")
+    val name:String = params.getOrElse("name", halt(400))
+    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val p = MongoDBObject("metadata.name" -> name)
+    pokeColl.findOne(p).foreach { x =>
+      response.getWriter.write(JSON.serialize(x))
+    //  println("Found a pokemon! %s".format(x("metadata")))
+    }
+  }
+
+  get("/pokemon/:name/generation/:generation"){
+    response.setContentType("application/json")
+    val name:String = params.get("name")
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val p = MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation)
+    println(p)
+    pokeColl.findOne(p).foreach { x =>
+      response.getWriter.write(JSON.serialize(x))
+      //  println("Found a pokemon! %s".format(x("metadata")))
+    }
+  }
+
   get("/somejson") {
 
-    response.setContentType("application/json");
+    response.setContentType("application/json")
     println( "Hello Unova!" )
     println( "Here we go! ")
     val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response);
     println( "Bai" )
-    response.getWriter().write(json);
+    response.getWriter.write(json)
 
 
   }
@@ -69,7 +107,7 @@ class MyScalatraServlet extends ScalatraServlet {
     println( "Here we go! ")
     val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response)
     println( "Bai" )
-    response.getWriter().write(json);
+    response.getWriter.write(json)
 
     <html>
       <body>
@@ -120,7 +158,7 @@ class MyScalatraServlet extends ScalatraServlet {
         "hp"->100,
         "nationalId"->"001")
     )
-    return objectToReturn
+    objectToReturn
   }
 
   def getTestMove(): MongoDBObject = {
@@ -158,7 +196,7 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
   def cleanupDB(m: MongoCollection) = {
-    m.drop();
+    m.drop()
   }
 
   def connectToDB(obj_id: String, obj_val: String, obj_type: String, response: HttpServletResponse) :String =  {
@@ -176,12 +214,11 @@ class MyScalatraServlet extends ScalatraServlet {
     mongoColl.find()
 
 
-
-    val q = MongoDBObject(obj_id -> obj_val)
-    for (x <- mongoColl.find(q)) returnedItem = JSON.serialize(x)//println(x)
+    val q = MongoDBObject("pokemonId" -> "001BulbasaurV")
+    for (x <- mongoColl.find(q)) returnedItem = JSON.serialize(x)
 
     cleanupDB(mongoColl)
-     return returnedItem;
+    returnedItem
 
   }
 
