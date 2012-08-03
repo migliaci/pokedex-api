@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b6976e3f-d4c4-4281-ab5c-f95830df569d" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/MyScalatraFilter.scala" afterPath="$PROJECT_DIR$/src/main/scala/MyScalatraFilter.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" afterPath="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala" afterPath="$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala" />
     </list>
     <ignored path="scalatra-maven-prototype.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -65,50 +61,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="MyScalatraServlet.scala" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MyScalatraServlet.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="6" selection-start="397" selection-end="397" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#184#205#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MyScalatraFilterSuite.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="22" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MyScalatraFilter.scala" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraFilter.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="6" selection-start="104" selection-end="104" vertical-scroll-proportion="-0.2669039">
-              <folding>
-                <element signature="e#25#46#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="22" selection-start="598" selection-end="598" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="web.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="27" selection-start="411" selection-end="411" vertical-scroll-proportion="0.0">
+            <state line="232" column="11" selection-start="0" selection-end="5269" vertical-scroll-proportion="0.65346533">
               <folding />
             </state>
           </provider>
@@ -129,9 +85,10 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
-        <option value="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" />
         <option value="$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/MyScalatraFilter.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/JSONManipulator.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala" />
       </list>
     </option>
   </component>
@@ -144,8 +101,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="172" />
-    <option name="y" value="87" />
+    <option name="x" value="1279" />
+    <option name="y" value="74" />
     <option name="width" value="768" />
     <option name="height" value="464" />
   </component>
@@ -175,6 +132,16 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -347,9 +314,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope">
-        <subPane subId="Project Files" />
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -513,7 +477,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="172" y="87" width="768" height="464" extended-state="0" />
+    <frame x="1279" y="74" width="768" height="464" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -528,7 +492,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25694445" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25694445" sideWeight="0.5206847" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -592,70 +556,50 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="22" selection-start="598" selection-end="598" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/scalate/layouts/default.scaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/scalate/templates/hello-scalate.scaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="22" selection-start="211" selection-end="211" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="6" selection-start="397" selection-end="397" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#184#205#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/scalatra-maven-prototype.iml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="27" selection-start="411" selection-end="411" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="9" column="27" selection-start="411" selection-end="411" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="22" selection-start="598" selection-end="598" vertical-scroll-proportion="-6.0747333" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala/MyScalatraFilterSuite.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="22" selection-start="211" selection-end="211" vertical-scroll-proportion="0.1980198" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraFilter.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="6" selection-start="104" selection-end="104" vertical-scroll-proportion="-0.2669039">
-          <folding>
-            <element signature="e#25#46#0" expanded="true" />
-          </folding>
+        <state line="8" column="34" selection-start="181" selection-end="181" vertical-scroll-proportion="0.04950495" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/MyScalatraServlet.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="232" column="11" selection-start="0" selection-end="5269" vertical-scroll-proportion="0.65346533">
+          <folding />
         </state>
       </provider>
     </entry>
