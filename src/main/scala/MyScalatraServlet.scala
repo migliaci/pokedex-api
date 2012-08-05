@@ -36,6 +36,17 @@ class MyScalatraServlet extends ScalatraServlet {
     </p>
   }
 
+  get("/guess/*") {
+    "You missed!"
+  }
+
+  get("/guess/:who") {
+    params("who") match {
+      case "Frank" => "You got me!"
+      case _ => pass()
+    }
+  }
+
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
@@ -61,6 +72,22 @@ class MyScalatraServlet extends ScalatraServlet {
       jsonString += (JSON.serialize(x)+",")
     }
     response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+  }
+
+  get("/pokemon/all/:low/to/:high/:generation"){
+    val low:Int = params.getOrElse("low", halt(400)).toInt
+    val high:Int = params.getOrElse("high", halt(400)).toInt
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    response.setContentType("application/json")
+    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
+    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+    var jsonString = "["
+    for (x <- pokeColl.find(q, fields).sort(MongoDBObject("metadata.nationalId" -> 1))) {
+      jsonString += (JSON.serialize(x)+",")
+    }
+    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+
   }
 
   get("/pokemon/:name"){
