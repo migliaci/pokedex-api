@@ -1,5 +1,6 @@
 package com.ign.pokedex
 import com.mongodb.casbah.Imports._
+import com.mongodb.QueryBuilder
 import com.mongodb.util.JSON
 import javax.servlet.http.HttpServletResponse
 
@@ -45,6 +46,8 @@ object PokedexUtils {
     var returnedItem = ""
     var count = 0;
     val results = mongoColl.find(objectToQuery)
+
+    println("RESULTS LENGTH:" + results.length)
 
     if (results.length == 0) {
       println("Returning zero elements")
