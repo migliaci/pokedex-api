@@ -36,17 +36,6 @@ class MyScalatraServlet extends ScalatraServlet {
     </p>
   }
 
-  get("/guess/*") {
-    "You missed!"
-  }
-
-  get("/guess/:who") {
-    params("who") match {
-      case "Frank" => "You got me!"
-      case _ => pass()
-    }
-  }
-
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
