@@ -40,14 +40,27 @@ class MyScalatraServlet extends ScalatraServlet {
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
     val pokeColl = MongoConnection()("pokedex")("pokedex_data")
-    val q  = MongoDBObject.empty
-    val fields = MongoDBObject("metadata.name" -> 1)
-    response.getWriter.write('[')
-    for (x <- pokeColl.find(q, fields).limit(size)) {
-      response.getWriter.write(JSON.serialize(x))
-
+    val q  = MongoDBObject("metadata.generation" -> 5)
+    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+    var jsonString = "["
+    for (x <- pokeColl.find(q, fields).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
+      jsonString += (JSON.serialize(x)+",")
     }
-    response.getWriter.write(']')
+    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+  }
+
+  get("/pokemon/all/:size/:generation"){
+    val size:Int = params.getOrElse("size", "20").toInt
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    response.setContentType("application/json")
+    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val q  = MongoDBObject("metadata.generation" -> generation)
+    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+    var jsonString = "["
+    for (x <- pokeColl.find(q, fields).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
+      jsonString += (JSON.serialize(x)+",")
+    }
+    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
   }
 
   get("/pokemon/:name"){
@@ -89,7 +102,7 @@ class MyScalatraServlet extends ScalatraServlet {
   get("/moves") {
     response.setContentType("application/json")
     println( "in all moves query" )
-    response.getWriter.write(this.connectToDB_MoveQuery)
+    response.getWriter.write(this.connectToDB_MoveQuery())
     println( "Bai" )
 
   }
