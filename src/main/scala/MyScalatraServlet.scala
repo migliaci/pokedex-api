@@ -132,6 +132,17 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
+  get("/moves/type_test") {
+    response.setContentType("application/json")
+    println("in moves test type query")
+    //val moveType:String = params.getOrElse("type", halt(400))
+    response.getWriter.write(this.connectToDB_MoveMultipleParameterQueryTest("metadata.type", "derp"))
+
+    //response.getWriter.write(this.connectToDB_MoveSingleParameterQuery("metadata.type", moveType))
+    println( "Bai" )
+
+  }
+
 
   get("/pokemans") {
 
@@ -172,6 +183,27 @@ class MyScalatraServlet extends ScalatraServlet {
     mongoColl.find()
 
     returnedItem = PokedexUtils.executeMultipleQuery(mongoColl, MongoDBObject(param_name->param_val))
+
+    PokedexUtils.cleanupDB(mongoColl)
+
+    returnedItem
+  }
+
+  //maybe refactor to pass query into function, make queries static in queryManager and call them.
+
+  def connectToDB_MoveMultipleParameterQueryTest(param_name: String, param_val: String) : String = {
+
+    val mongoColl = MongoConnection()("pokedex")("test_data")
+    var returnedItem =""
+
+    //save to the DB
+    mongoColl += PokedexTestGenerator.getTestMove()
+    mongoColl += PokedexTestGenerator.getTestMove2()
+    mongoColl.find()
+
+    val r = $or ("metadata.type" -> "fire", "metadata.type"->"fuckyou")
+    val s =  MongoDBObject("metadata.type" -> "fighting", "metadata.name"->"Hyper_Beam")
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoColl, s)
 
     PokedexUtils.cleanupDB(mongoColl)
 
