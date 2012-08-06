@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServletResponse
 
 object PokedexUtils {
 
+  val HP_NAME = ""
+  val ATK_NAME = ""
+  val DEF_NAME =""
+  val SPATK_NAME = ""
+  val SPDEF_NAME = ""
+
   def connectToDB(obj_id: String, obj_val: String, obj_type: String, response: HttpServletResponse) :String =  {
     val mongoColl = MongoConnection()("pokedex")("test_data")
     var returnedItem =""
@@ -21,9 +27,9 @@ object PokedexUtils {
     //save to the DB
 
     if (obj_type == "pokemon"){
-      mongoColl += PokedexTestGenerator.getTestPokemon()
+      mongoColl += PokedexTestGenerator.getTestPokemon1
     } else if (obj_type == "move") {
-      mongoColl += PokedexTestGenerator.getTestMove()
+      mongoColl += PokedexTestGenerator.getTestMove1()
     }
 
     mongoColl.find()
