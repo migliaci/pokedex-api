@@ -41,6 +41,7 @@ object PokedexTestGenerator {
         "specialDefence" -> 45,
         "speed" -> 45,
         "hp" -> 100,
+        "generation" -> 5,
         "nationalId" -> 1)
     )
     objectToReturn
@@ -70,6 +71,7 @@ object PokedexTestGenerator {
         "specialDefence" -> 45,
         "speed" -> 60,
         "hp" -> 40,
+        "generation" -> 5,
         "nationalId" -> 25)
     )
     objectToReturn
@@ -99,6 +101,7 @@ object PokedexTestGenerator {
         "specialDefence" -> 1,
         "speed" -> 30,
         "hp" -> 10,
+        "generation" -> 5,
         "nationalId" -> 172)
     )
     objectToReturn
@@ -128,7 +131,20 @@ object PokedexTestGenerator {
         "specialDefence" -> 45,
         "speed" -> 45,
         "hp" -> 100,
-        "nationalId" -> 26)
+        "generation" -> 5,
+        "nationalId" -> 26),
+       "moves"-> MongoDBObject(
+          "levelMoves" -> MongoDBObject(
+            "1" -> "001"
+          ),
+          "machineMoves" -> MongoDBObject(
+            "2" -> "002"
+          ),
+          "tutorMoves" -> MongoDBObject (
+            "3" -> "003"
+          )
+
+        )
     )
     objectToReturn
   }
@@ -136,7 +152,7 @@ object PokedexTestGenerator {
   def getTestMove1(): MongoDBObject = {
 
     val objectToReturn = MongoDBObject(
-      "moveId" -> "001",
+      "moveId" -> "1",
       "metadata" -> MongoDBObject(
         "name" -> "Hyper_Beam",
         "type" -> "fighting",
@@ -154,7 +170,7 @@ object PokedexTestGenerator {
   def getTestMove2(): MongoDBObject = {
 
     val objectToReturn = MongoDBObject(
-      "moveId" -> "002",
+      "moveId" -> "2",
       "metadata" -> MongoDBObject(
         "name" -> "Fire_Blast",
         "type" -> "fire",
@@ -195,6 +211,19 @@ object PokedexTestGenerator {
 
   }
 
+  def getTestEvolution3() : MongoDBObject = {
+
+    val objectToReturn = MongoDBObject(
+      "evolutionChain" -> 1,
+      "from" -> 1,
+      "to" -> 2,
+      "how" -> "Level up"
+    )
+
+    objectToReturn
+
+  }
+
   def setupTestDatabase() {
 
 
@@ -207,6 +236,7 @@ object PokedexTestGenerator {
     moveCollection += this.getTestMove2
     evolutionCollection += this.getTestEvolution1
     evolutionCollection += this.getTestEvolution2
+    evolutionCollection += this.getTestEvolution3
     pokemonCollection.find
     moveCollection.find
     evolutionCollection.find

@@ -88,18 +88,6 @@ class MyScalatraServlet extends ScalatraServlet {
     }
   }
 
-  get("/somejson") {
-
-    response.setContentType("application/json")
-    println( "Hello Unova!" )
-    println( "Here we go! ")
-    val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response)
-    println( "Bai" )
-    response.getWriter.write(json)
-
-
-  }
-
   get("/moves") {
     response.setContentType("application/json")
     println( "in all moves query" )
@@ -108,11 +96,24 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
+  /*
   get("/moves/:name") {
     response.setContentType("application/json")
     println("in moves name query")
     val name:String = params.getOrElse("name", halt(400))
     response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", name))
+
+  }
+  */
+  // moves/id/pokemon
+  // search on level moves and machine moves
+  // return list of pokemon that learn it, set default generation 5
+
+  get("/moves/:id"){
+    response.setContentType("application/json")
+    val moveId:String = params.getOrElse("id", "1").toString
+    println("inside move query for pokemon")
+    response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId))
 
   }
 
@@ -133,11 +134,20 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
-  get("/evolutions/:national_id") {
+  get("/evolutions/pokemon/:national_id") {
     response.setContentType("application/json")
     println("in evolution query by id")
     val nationalId:Int = params.getOrElse("national_id", halt(400)).toInt
     response.getWriter.write(QueryManager.Query_EvolutionsByNationalId(nationalId))
+    println( "Bai" )
+
+  }
+
+  get("/evolutions/chain/:chain_id") {
+    response.setContentType("application/json")
+    println("in evolution query by chain")
+    val chainId:Int = params.getOrElse("chain_id", halt(400)).toInt
+    response.getWriter.write(QueryManager.Query_EvolutionsByChainId(chainId))
     println( "Bai" )
 
   }
