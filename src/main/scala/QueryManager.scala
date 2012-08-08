@@ -52,6 +52,36 @@ object QueryManager {
 
   }
 
+  def Query_PokemonByLevelMoveLearned(move_id : String) : String = {
+
+    //NOTE:  THIS IS TEMPORARY
+    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    var returnedItem =""
+    //get all pokemon of generation 5, then search levelMoves
+    val subQuery = ("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true)
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> 5) ++ subQuery
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
+
+    returnedItem
+
+  }
+
+  def Query_PokemonByMachineMoveLearned(move_id : String) : String = {
+
+    //NOTE:  THIS IS TEMPORARY
+    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    var returnedItem =""
+
+    //get all pokemon of generation 5, then search levelMoves
+    val subQuery = ("moves.machineMoves."+move_id) -> MongoDBObject("$exists"-> true)
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> 5) ++ subQuery
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
+
+
+    returnedItem
+
+  }
+
   def Query_AllMoves() : String = {
 
     val mongoColl = PokedexTestGenerator.moveCollection

@@ -96,7 +96,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
-  /*
+
   get("/moves/:name") {
     response.setContentType("application/json")
     println("in moves name query")
@@ -104,18 +104,36 @@ class MyScalatraServlet extends ScalatraServlet {
     response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", name))
 
   }
-  */
+
   // moves/id/pokemon
   // search on level moves and machine moves
   // return list of pokemon that learn it, set default generation 5
 
-  get("/moves/:id"){
+
+  get("/moves/pokemon/:id"){
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
     println("inside move query for pokemon")
     response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId))
 
   }
+
+  get("/moves/pokemon/level/:id"){
+    response.setContentType("application/json")
+    val moveId:String = params.getOrElse("id", "1").toString
+    println("inside move query for pokemon")
+    response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId))
+
+  }
+  //get("/articles-by/:author/:page") {
+  get("/moves/pokemon/machine/:id"){
+    response.setContentType("application/json")
+    val moveId:String = params.getOrElse("id", "1").toString
+    println("inside move query for pokemon")
+    response.getWriter.write(QueryManager.Query_PokemonByMachineMoveLearned(moveId))
+
+  }
+
 
   get("/moves/category/:category") {
     response.setContentType("application/json")
