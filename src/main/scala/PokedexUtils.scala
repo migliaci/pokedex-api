@@ -1,5 +1,6 @@
 package com.ign.pokedex
 import com.mongodb.casbah.Imports._
+import com.mongodb.QueryBuilder
 import com.mongodb.util.JSON
 import javax.servlet.http.HttpServletResponse
 
@@ -13,6 +14,12 @@ import javax.servlet.http.HttpServletResponse
 
 object PokedexUtils {
 
+  val HP_NAME = ""
+  val ATK_NAME = ""
+  val DEF_NAME =""
+  val SPATK_NAME = ""
+  val SPDEF_NAME = ""
+
   def connectToDB(obj_id: String, obj_val: String, obj_type: String, response: HttpServletResponse) :String =  {
     val mongoColl = MongoConnection()("pokedex")("test_data")
     var returnedItem =""
@@ -20,9 +27,9 @@ object PokedexUtils {
     //save to the DB
 
     if (obj_type == "pokemon"){
-      mongoColl += PokedexTestGenerator.getTestPokemon()
+      mongoColl += PokedexTestGenerator.getTestPokemon1
     } else if (obj_type == "move") {
-      mongoColl += PokedexTestGenerator.getTestMove()
+      mongoColl += PokedexTestGenerator.getTestMove1()
     }
 
     mongoColl.find()
@@ -45,6 +52,8 @@ object PokedexUtils {
     var returnedItem = ""
     var count = 0;
     val results = mongoColl.find(objectToQuery)
+
+    println("RESULTS LENGTH:" + results.length)
 
     if (results.length == 0) {
       println("Returning zero elements")
