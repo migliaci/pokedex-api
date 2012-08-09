@@ -37,6 +37,16 @@ class MyScalatraServlet extends ScalatraServlet {
     </p>
   }
 
+  /*
+    SELECT types.identifier,
+	type_efficacy.damage_type_id,
+	type_efficacy.target_type_id,
+	type_efficacy.damage_factor
+FROM type_efficacy INNER JOIN types ON type_efficacy.damage_type_id = types.id
+WHERE types.identifier="normal"
+   */
+
+
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
@@ -105,6 +115,27 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
+  get("/types") {
+
+  }
+
+  get("/types/weak-to/:name") {
+
+  }
+
+  get("/types/strong-against/:name") {
+
+  }
+
+  //negative relation - does less damage or zero damage against passed type.
+  get("/types/relation/negative/:name") {
+
+  }
+
+  //positive relation - does 1.5-2x damage against passed type.
+  get("/types/relation/positive/:name") {
+
+  }
   // moves/id/pokemon
   // search on level moves and machine moves
   // return list of pokemon that learn it, set default generation 5
