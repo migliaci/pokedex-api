@@ -137,8 +137,11 @@ object PokedexTestGenerator {
           "levelMoves" -> MongoDBObject(
             "1" -> "001"
           ),
-          "machineMoves" -> MongoDBObject(
+          "hmMoves" -> MongoDBObject(
             "2" -> "002"
+          ),
+          "tmMoves" -> MongoDBObject(
+            "1" -> "001"
           ),
           "tutorMoves" -> MongoDBObject (
             "3" -> "003"

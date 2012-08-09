@@ -36,7 +36,8 @@ class MyScalatraServlet extends ScalatraServlet {
       {params("name")}
     </p>
   }
-
+  //pokemon by national Id
+  //
   /*
     SELECT types.identifier,
 	type_efficacy.damage_type_id,
@@ -101,6 +102,17 @@ WHERE types.identifier="normal"
     }
   }
 
+  get("/pokemon/national_id/:id"){
+    response.setContentType("application/json")
+    val id:Int = params.getOrElse("id", "1").toInt
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
+    val p = MongoDBObject("metadata.nationalId" -> id)
+    pokeColl.findOne(p).foreach { x =>
+      response.getWriter.write(JSON.serialize(x))
+      //  println("Found a pokemon! %s".format(x("metadata")))
+    }
+  }
+
   get("/pokemon/:name/generation/:generation"){
     response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
@@ -135,6 +147,7 @@ WHERE types.identifier="normal"
 
   }
 
+  //types/
   get("/types/weak-to/:name") {
 
   }
@@ -161,7 +174,7 @@ WHERE types.identifier="normal"
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
     println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId))
+    response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId, 5))
 
   }
 
@@ -169,15 +182,23 @@ WHERE types.identifier="normal"
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
     println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId))
+    response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, 5))
 
   }
   //get("/articles-by/:author/:page") {
-  get("/moves/pokemon/machine/:id"){
+  get("/moves/pokemon/tm/:id"){
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
     println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByMachineMoveLearned(moveId))
+    response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, 5))
+
+  }
+
+  get("/moves/pokemon/hm/:id"){
+    response.setContentType("application/json")
+    val moveId:String = params.getOrElse("id", "1").toString
+    println("inside move query for pokemon")
+    response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, 5))
 
   }
 

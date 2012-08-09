@@ -30,7 +30,7 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByMoveLearned(move_id : String) : String = {
+  def Query_PokemonByMoveLearned(move_id : String, generation : Int) : String = {
 
     //NOTE:  THIS IS TEMPORARY
     val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
@@ -41,8 +41,8 @@ object QueryManager {
     //get all pokemon of generation 5, then search levelMoves and machineMoves
     println("moveId:" + move_id)
     println("levelMoves."+move_id)
-    val subQuery = $or(("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true), ("moves.tutorMoves."+move_id) -> MongoDBObject("$exists" -> true), ("moves.machineMoves." + move_id) -> MongoDBObject("$exists" -> true))
-    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> 5) ++ subQuery
+    val subQuery = $or(("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true), ("moves.tutorMoves."+move_id) -> MongoDBObject("$exists" -> true), ("moves.hmMoves." + move_id) -> MongoDBObject("$exists" -> true), ("moves.tmMoves." + move_id) -> MongoDBObject("$exists" -> true))
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
     //val firstQuery = mongoPokemonColl.find(allPokemonQueryObject)
     //println("LENGTH:" + firstQuery.length)
     returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
@@ -52,29 +52,45 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByLevelMoveLearned(move_id : String) : String = {
+  def Query_PokemonByLevelMoveLearned(move_id : String, generation: Int) : String = {
 
     //NOTE:  THIS IS TEMPORARY
     val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
     var returnedItem =""
     //get all pokemon of generation 5, then search levelMoves
     val subQuery = ("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true)
-    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> 5) ++ subQuery
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
     returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
 
     returnedItem
 
   }
 
-  def Query_PokemonByMachineMoveLearned(move_id : String) : String = {
+  def Query_PokemonByTMLearned(move_id : String, generation: Int) : String = {
 
     //NOTE:  THIS IS TEMPORARY
     val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
     var returnedItem =""
 
     //get all pokemon of generation 5, then search levelMoves
-    val subQuery = ("moves.machineMoves."+move_id) -> MongoDBObject("$exists"-> true)
-    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> 5) ++ subQuery
+    val subQuery = ("moves.tmMoves."+move_id) -> MongoDBObject("$exists"-> true)
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
+
+
+    returnedItem
+
+  }
+
+  def Query_PokemonByHMLearned(move_id : String, generation: Int) : String = {
+
+    //NOTE:  THIS IS TEMPORARY
+    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    var returnedItem =""
+
+    //get all pokemon of generation 5, then search levelMoves
+    val subQuery = ("moves.hmMoves."+move_id) -> MongoDBObject("$exists"-> true)
+    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
     returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
 
 
