@@ -229,7 +229,7 @@ object PokedexTestGenerator {
 
   def setupTestDatabase() {
 
-
+     /*
     //save to the DB
     pokemonCollection += this.getTestPokemon1
     pokemonCollection += this.getTestPokemon2
@@ -243,13 +243,15 @@ object PokedexTestGenerator {
     pokemonCollection.find
     moveCollection.find
     evolutionCollection.find
-
+    */
   }
 
   def deleteTestDatabase() {
+    /*
     moveCollection.drop
     pokemonCollection.drop
     evolutionCollection.drop
+    */
   }
 
 }
