@@ -50,7 +50,7 @@ WHERE types.identifier="normal"
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
-    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
     val q  = MongoDBObject("metadata.generation" -> 5)
     val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
     var jsonString = "["
@@ -64,7 +64,7 @@ WHERE types.identifier="normal"
     val size:Int = params.getOrElse("size", "20").toInt
     val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
     val q  = MongoDBObject("metadata.generation" -> generation)
     val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
     var jsonString = "["
@@ -79,7 +79,7 @@ WHERE types.identifier="normal"
     val high:Int = params.getOrElse("high", halt(400)).toInt
     val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
     val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
     val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
     var jsonString = "["
@@ -93,7 +93,7 @@ WHERE types.identifier="normal"
   get("/pokemon/:name"){
     response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
-    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
     val p = MongoDBObject("metadata.name" -> name)
     pokeColl.findOne(p).foreach { x =>
       response.getWriter.write(JSON.serialize(x))
@@ -105,7 +105,7 @@ WHERE types.identifier="normal"
     response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
     val generation:Int = params.getOrElse("generation", "5").toInt
-    val pokeColl = MongoConnection()("pokedex")("pokedex_data")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
     val p = MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation)
     println(p)
     pokeColl.findOne(p).foreach { x =>
