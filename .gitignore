@@ -1,3 +1,4 @@
 target/
 *.DS_Store
 .idea/dictionaries/fvelazquez.xml
+.idea/workspace.xml
