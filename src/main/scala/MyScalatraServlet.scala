@@ -12,7 +12,6 @@ import org.scalatra._
 import com.mongodb.casbah.Imports._
 import com.mongodb.util.JSON
 import PokedexUtils._
-import scala.util.control.Breaks._
 
 class MyScalatraServlet extends ScalatraServlet {
 
@@ -36,16 +35,6 @@ class MyScalatraServlet extends ScalatraServlet {
       {params("name")}
     </p>
   }
-
-  /*
-    SELECT types.identifier,
-	type_efficacy.damage_type_id,
-	type_efficacy.target_type_id,
-	type_efficacy.damage_factor
-FROM type_efficacy INNER JOIN types ON type_efficacy.damage_type_id = types.id
-WHERE types.identifier="normal"
-   */
-
 
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
@@ -114,79 +103,39 @@ WHERE types.identifier="normal"
     }
   }
 
-  get("/moves") {
+  get("/somejson") {
+
     response.setContentType("application/json")
-    println( "in all moves query" )
-    response.getWriter.write(QueryManager.Query_AllMoves())
+    println( "Hello Unova!" )
+    println( "Here we go! ")
+    val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response)
     println( "Bai" )
+    response.getWriter.write(json)
+
 
   }
 
+  get("/moves") {
+    response.setContentType("application/json")
+    println( "in all moves query" )
+    response.getWriter.write(this.connectToDB_MoveQuery())
+    println( "Bai" )
+
+  }
 
   get("/moves/:name") {
     response.setContentType("application/json")
     println("in moves name query")
     val name:String = params.getOrElse("name", halt(400))
-    response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", name))
+    response.getWriter.write(this.connectToDB_MoveSingleParameterQuery("metadata.name", name))
 
   }
-
-  get("/types") {
-
-  }
-
-  get("/types/weak-to/:name") {
-
-  }
-
-  get("/types/strong-against/:name") {
-
-  }
-
-  //negative relation - does less damage or zero damage against passed type.
-  get("/types/relation/negative/:name") {
-
-  }
-
-  //positive relation - does 1.5-2x damage against passed type.
-  get("/types/relation/positive/:name") {
-
-  }
-  // moves/id/pokemon
-  // search on level moves and machine moves
-  // return list of pokemon that learn it, set default generation 5
-
-
-  get("/moves/pokemon/:id"){
-    response.setContentType("application/json")
-    val moveId:String = params.getOrElse("id", "1").toString
-    println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId))
-
-  }
-
-  get("/moves/pokemon/level/:id"){
-    response.setContentType("application/json")
-    val moveId:String = params.getOrElse("id", "1").toString
-    println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId))
-
-  }
-  //get("/articles-by/:author/:page") {
-  get("/moves/pokemon/machine/:id"){
-    response.setContentType("application/json")
-    val moveId:String = params.getOrElse("id", "1").toString
-    println("inside move query for pokemon")
-    response.getWriter.write(QueryManager.Query_PokemonByMachineMoveLearned(moveId))
-
-  }
-
 
   get("/moves/category/:category") {
     response.setContentType("application/json")
     println("in moves category query")
     val category:String = params.getOrElse("category", halt(400))
-    response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.category", category))
+    response.getWriter.write(this.connectToDB_MoveSingleParameterQuery("metadata.category", category))
 
   }
 
@@ -194,35 +143,28 @@ WHERE types.identifier="normal"
     response.setContentType("application/json")
     println("in moves type query")
     val moveType:String = params.getOrElse("type", halt(400))
-    response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.type", moveType))
+    response.getWriter.write(this.connectToDB_MoveSingleParameterQuery("metadata.type", moveType))
     println( "Bai" )
 
   }
 
-  get("/evolutions/pokemon/:national_id") {
-    response.setContentType("application/json")
-    println("in evolution query by id")
-    val nationalId:Int = params.getOrElse("national_id", halt(400)).toInt
-    response.getWriter.write(QueryManager.Query_EvolutionsByNationalId(nationalId))
-    println( "Bai" )
 
-  }
+  get("/pokemans") {
 
-  get("/evolutions/chain/:chain_id") {
-    response.setContentType("application/json")
-    println("in evolution query by chain")
-    val chainId:Int = params.getOrElse("chain_id", halt(400)).toInt
-    response.getWriter.write(QueryManager.Query_EvolutionsByChainId(chainId))
-    println( "Bai" )
+    val json = connectToDB("pokemonId", "001BulbasaurV", "pokemon", response)
+    response.getWriter.write(json)
 
-  }
-
-  before {
-    PokedexTestGenerator.setupTestDatabase()
-  }
-
-  after {
-    PokedexTestGenerator.deleteTestDatabase()
+    <html>
+      <body>
+        <h1>LET ME SHOW YOU MY POKEMANZ!</h1>
+        <h2>LET ME SHOW YOU THEM!</h2>
+        <ul>
+          <li>MUDKIPZ</li>
+          <li>MAGICARP</li>
+          <li>GOLDEEN</li>
+        </ul>
+      </body>
+    </html>
   }
 
   notFound {
@@ -235,9 +177,26 @@ WHERE types.identifier="normal"
 
   }
 
+  def connectToDB_MoveSingleParameterQuery(param_name: String, param_val: String) : String = {
+
+    val mongoColl = MongoConnection()("pokedex")("test_data")
+    var returnedItem =""
+
+    //save to the DB
+    mongoColl += PokedexTestGenerator.getTestMove1()
+    mongoColl += PokedexTestGenerator.getTestMove2()
+    mongoColl.find()
+
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoColl, MongoDBObject(param_name->param_val))
+
+    PokedexUtils.cleanupDB(mongoColl)
+
+    returnedItem
+  }
+
   def connectToDB_MoveQuery() : String = {
 
-    val mongoColl = MongoConnection()("pokedex")("moves")
+    val mongoColl = MongoConnection()("pokedex")("test_data")
     var returnedItem =""
 
     //save to the DB
