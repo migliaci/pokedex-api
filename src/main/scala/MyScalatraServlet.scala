@@ -124,6 +124,18 @@ WHERE types.identifier="normal"
     }
   }
 
+  get("/pokemon/national_id/:id/generation/:generation"){
+    response.setContentType("application/json")
+    val id:Int = params.getOrElse("id", "1").toInt
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
+    val p = MongoDBObject("metadata.nationalId" -> id, "metadata.generation" -> generation)
+    pokeColl.findOne(p).foreach { x =>
+      response.getWriter.write(JSON.serialize(x))
+      //  println("Found a pokemon! %s".format(x("metadata")))
+    }
+  }
+
   get("/pokemon/:name/generation/:generation"){
     response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))

@@ -208,23 +208,6 @@ object QueryManager {
       }
 
       var count = 0
-      //there has to be a better way, but I don't know it yet.
-
-      /*
-      while(count < type2Efficacy.typeMap.size) {
-
-        var xValue = type1Efficacy.typeMap.getOrElse(types.get(count), 0.0)
-        var yValue = type2Efficacy.typeMap.getOrElse(types.get(count), 0.0)
-        var total = (xValue * yValue)/100
-        newEfficacy.typeMap.put(types.get(count), total)
-        count += 1
-      }
-
-      println(newEfficacy.typeMap)
-
-      returnedItem = JSON.serialize(newEfficacy.typeMap)
-      println(returnedItem)
-      */
 
       returnedItem = "{"
       while(count < type2Efficacy.typeMap.size) {
