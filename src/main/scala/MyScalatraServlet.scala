@@ -159,7 +159,14 @@ WHERE types.identifier="normal"
     println("in types test query")
     var type1:String = params.getOrElse("type1", halt(400))
     var type2:String = params.getOrElse("type2", halt(400))
-    response.getWriter.write(QueryManager.Query_EfficacyByType(type1, type2))
+    response.getWriter.write(QueryManager.Query_EfficacyByMultipleType(type1, type2))
+  }
+
+  get("/types/efficacy/type1/:type1") {
+    response.setContentType("application/json")
+    println("in types test query")
+    var type1:String = params.getOrElse("type1", halt(400))
+    response.getWriter.write(QueryManager.Query_EfficacyBySingleType(type1))
   }
 
   //types/

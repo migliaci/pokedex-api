@@ -143,18 +143,45 @@ object QueryManager {
 
   }
 
-  def Query_EfficacyByType(type1: String, type2: String) : String = {
+  def Query_EfficacyBySingleType(type1: String) : String = {
+    val mongoTypeColl = PokedexTestGenerator.typeCollection
+    val typeQueryObject =  mongoTypeColl.find(MongoDBObject("opposed_type" -> type1))
+    var key = ""
+    var value = 0.0
+    var types = new util.ArrayList[String]
+    var newEfficacy = new Efficacy
+    var returnedItem = ""
+
+    //hackity hack, don't talk back
+    for(x <- typeQueryObject) {
+      key =  x.get("current_type").toString
+      value = ((x.get("damage_factor").toString.toFloat))
+      newEfficacy.typeMap.put(key, value)
+      types.add(key)
+    }
+
+    returnedItem = "{"
+    var count = 0
+    while(count < newEfficacy.typeMap.size) {
+      var damageValue = newEfficacy.typeMap.getOrElse(types.get(count), 0.0)
+      returnedItem += "\"" + types.get(count) + "\"" +" : "+ damageValue +","
+      count += 1
+    }
+
+    returnedItem = returnedItem.substring(0, returnedItem.length -1)+"}"
+
+
+    returnedItem
+
+  }
+
+  def Query_EfficacyByMultipleType(type1: String, type2: String) : String = {
     //if type2 == "", make easy query to find weaknesses.
     val mongoTypeColl = PokedexTestGenerator.typeCollection;
     var returnedItem = ""
 
 
-    if (type2 == "") {
-    val typeQueryObject = MongoDBObject("current_type" -> type1);
-    returnedItem = PokedexUtils.executeMultipleQuery(mongoTypeColl, typeQueryObject)
-    println(returnedItem)
-    returnedItem
-    } else {  //MwC (Manish will Cry)
+       //MwC (Manish will Cry)
 
        //do lots of shit
       var type1QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type1))
@@ -180,8 +207,10 @@ object QueryManager {
         type2Efficacy.typeMap.put(key, value)
       }
 
-      var count = 0;
+      var count = 0
       //there has to be a better way, but I don't know it yet.
+
+      /*
       while(count < type2Efficacy.typeMap.size) {
 
         var xValue = type1Efficacy.typeMap.getOrElse(types.get(count), 0.0)
@@ -195,16 +224,26 @@ object QueryManager {
 
       returnedItem = JSON.serialize(newEfficacy.typeMap)
       println(returnedItem)
+      */
 
-      //LEEEROY JSON!
-      returnedItem
+      returnedItem = "{"
+      while(count < type2Efficacy.typeMap.size) {
 
-    }
+        var xValue = type1Efficacy.typeMap.getOrElse(types.get(count), 0.0)
+        var yValue = type2Efficacy.typeMap.getOrElse(types.get(count), 0.0)
+        var total = (xValue * yValue)/100
+        //newEfficacy.typeMap.put(types.get(count), total)
+        returnedItem += "\"" + types.get(count) + "\"" +" : "+ total +","
+        count += 1
+      }
 
+      returnedItem = returnedItem.substring(0, returnedItem.length -1)+"}"
 
     //turn the shit into json
     //return the shit
 
+    //LEEEROY JSON!
+      returnedItem
 
   }
 
