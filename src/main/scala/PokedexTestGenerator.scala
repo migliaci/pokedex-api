@@ -247,11 +247,7 @@ object PokedexTestGenerator {
   }
 
   def deleteTestDatabase() {
-    /*
-    moveCollection.drop
-    pokemonCollection.drop
-    evolutionCollection.drop
-    */
+
   }
 
 }

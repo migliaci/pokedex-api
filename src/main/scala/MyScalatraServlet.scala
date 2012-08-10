@@ -136,6 +136,7 @@ WHERE types.identifier="normal"
     }
   }
 
+  //pokemon/name/:name/generation/:generation?
   get("/pokemon/:name/generation/:generation"){
     response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
@@ -147,23 +148,6 @@ WHERE types.identifier="normal"
       response.getWriter.write(JSON.serialize(x))
       //  println("Found a pokemon! %s".format(x("metadata")))
     }
-  }
-
-  get("/moves") {
-    response.setContentType("application/json")
-    println( "in all moves query" )
-    response.getWriter.write(QueryManager.Query_AllMoves())
-    println( "Bai" )
-
-  }
-
-
-  get("/moves/:name") {
-    response.setContentType("application/json")
-    println("in moves name query")
-    val name:String = params.getOrElse("name", halt(400))
-    response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", name))
-
   }
 
   get("/types/efficacy/type1/:type1/type2/:type2") {
@@ -181,28 +165,21 @@ WHERE types.identifier="normal"
     response.getWriter.write(QueryManager.Query_EfficacyBySingleType(type1))
   }
 
-  //types/
-  get("/types/weak-to/:name") {
+  get("/moves") {
+    response.setContentType("application/json")
+    println( "in all moves query" )
+    response.getWriter.write(QueryManager.Query_AllMoves())
+    println( "Bai" )
 
   }
 
-  get("/types/strong-against/:name") {
+  get("/moves/:name") {
+    response.setContentType("application/json")
+    println("in moves name query")
+    val name:String = params.getOrElse("name", halt(400))
+    response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", name))
 
   }
-
-  //negative relation - does less damage or zero damage against passed type.
-  get("/types/relation/negative/:name") {
-
-  }
-
-  //positive relation - does 1.5-2x damage against passed type.
-  get("/types/relation/positive/:name") {
-
-  }
-  // moves/id/pokemon
-  // search on level moves and machine moves
-  // return list of pokemon that learn it, set default generation 5
-
 
   get("/moves/pokemon/:id"){
     response.setContentType("application/json")
@@ -212,6 +189,7 @@ WHERE types.identifier="normal"
 
   }
 
+  //moves/level/pokemon/id?  add generation?
   get("/moves/pokemon/level/:id"){
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
@@ -219,7 +197,7 @@ WHERE types.identifier="normal"
     response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, 5))
 
   }
-  //get("/articles-by/:author/:page") {
+  //moves/tm/pokemon/id? add generation?
   get("/moves/pokemon/tm/:id"){
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
@@ -227,7 +205,7 @@ WHERE types.identifier="normal"
     response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, 5))
 
   }
-
+  //moves/hm/pokemon/id? add generation?
   get("/moves/pokemon/hm/:id"){
     response.setContentType("application/json")
     val moveId:String = params.getOrElse("id", "1").toString
@@ -254,6 +232,8 @@ WHERE types.identifier="normal"
 
   }
 
+  //evolutions/pokemon/national_id/id?
+  //add one for evolutions/pokemon/name/name?
   get("/evolutions/pokemon/:national_id") {
     response.setContentType("application/json")
     println("in evolution query by id")
