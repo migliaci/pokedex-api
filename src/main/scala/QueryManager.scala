@@ -17,8 +17,8 @@ object QueryManager {
   //maybe refactor to pass query into function, make queries static in queryManager and call them.
   //val r = $or ("metadata.type" -> "fire", "metadata.type"->"fuckyou")
 
-  def Query_MovesBySingleParameter(param_name: String, param_val: String) : String = {
-    val mongoColl = PokedexTestGenerator.moveCollection
+  def Query_MovesBySingleParameter(param_name: String, param_val: String, mongoConn: MongoConnection) : String = {
+    val mongoColl = mongoConn("pokedex")("moves")
     var returnedItem =""
 
 
@@ -26,17 +26,15 @@ object QueryManager {
     val s =  MongoDBObject(param_name -> param_val)
     returnedItem = PokedexUtils.executeMultipleQuery(mongoColl, s)
 
-    PokedexUtils.cleanupDB(mongoColl)
-
     returnedItem
 
   }
 
-  def Query_PokemonByMoveLearned(move_id : String, generation : Int) : String = {
+  def Query_PokemonByMoveLearned(move_id : String, generation : Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
-    val mongoMoveColl = PokedexTestGenerator.moveCollection
+    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
+    val mongoMoveColl = mongoConn("pokedex")("moves")
 
     var returnedItem =""
 
@@ -54,10 +52,10 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByLevelMoveLearned(move_id : String, generation: Int) : String = {
+  def Query_PokemonByLevelMoveLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem =""
     //get all pokemon of generation 5, then search levelMoves
     val subQuery = ("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true)
@@ -68,10 +66,10 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByTMLearned(move_id : String, generation: Int) : String = {
+  def Query_PokemonByTMLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem =""
 
     //get all pokemon of generation 5, then search levelMoves
@@ -84,10 +82,10 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByHMLearned(move_id : String, generation: Int) : String = {
+  def Query_PokemonByHMLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
+    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem =""
 
     //get all pokemon of generation 5, then search levelMoves
@@ -100,9 +98,9 @@ object QueryManager {
 
   }
 
-  def Query_AllMoves() : String = {
+  def Query_AllMoves(mongoConn: MongoConnection) : String = {
 
-    val mongoColl = PokedexTestGenerator.moveCollection
+    val mongoColl = mongoConn("pokedex")("moves")
     var returnedItem =""
 
     returnedItem = PokedexUtils.executeMultipleQuery(mongoColl,("moveId" $exists true))
@@ -110,11 +108,11 @@ object QueryManager {
     returnedItem
   }
 
-  def Query_EvolutionsByNationalId(national_id : Int) : String = {
+  def Query_EvolutionsByNationalId(national_id : Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = PokedexTestGenerator.pokemonCollection
-    val mongoEvolutionColl = PokedexTestGenerator.evolutionCollection
+    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
+    val mongoEvolutionColl = mongoConn("pokedex")("evolutions")
 
     var returnedItem =""
 
@@ -129,10 +127,10 @@ object QueryManager {
 
   }
 
-  def Query_EvolutionsByChainId(chain_id : Int) : String = {
+  def Query_EvolutionsByChainId(chain_id : Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
-    val mongoEvolutionColl = PokedexTestGenerator.evolutionCollection
+    val mongoEvolutionColl = mongoConn("pokedex")("evolutions")
 
     var returnedItem =""
 
@@ -143,8 +141,8 @@ object QueryManager {
 
   }
 
-  def Query_EfficacyBySingleType(type1: String) : String = {
-    val mongoTypeColl = PokedexTestGenerator.typeCollection
+  def Query_EfficacyBySingleType(type1: String, mongoConn: MongoConnection) : String = {
+    val mongoTypeColl = mongoConn("pokedex")("type")
     val typeQueryObject =  mongoTypeColl.find(MongoDBObject("opposed_type" -> type1))
     var key = ""
     var value = 0.0
@@ -175,9 +173,9 @@ object QueryManager {
 
   }
 
-  def Query_EfficacyByMultipleType(type1: String, type2: String) : String = {
+  def Query_EfficacyByMultipleType(type1: String, type2: String, mongoConn: MongoConnection) : String = {
     //if type2 == "", make easy query to find weaknesses.
-    val mongoTypeColl = PokedexTestGenerator.typeCollection;
+    val mongoTypeColl = mongoConn("pokedex")("type")
     var returnedItem = ""
 
 
