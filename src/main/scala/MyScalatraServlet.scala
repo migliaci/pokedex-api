@@ -47,6 +47,17 @@ FROM type_efficacy INNER JOIN types ON type_efficacy.damage_type_id = types.id
 WHERE types.identifier="normal"
    */
 
+  get("/pokemon/unfiltered/:size"){
+    val size:Int = params.getOrElse("size", "20").toInt
+    response.setContentType("application/json")
+    val pokeColl = MongoConnection()("pokedex")("pokemon")
+    val q  = MongoDBObject("metadata.generation" -> 5)
+    var jsonString = "["
+    for (x <- pokeColl.find(q).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
+      jsonString += (JSON.serialize(x)+",")
+    }
+    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+  }
 
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
