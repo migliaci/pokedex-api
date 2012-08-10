@@ -15,7 +15,7 @@ object PokedexTestGenerator {
   val pokemonCollection = MongoConnection()("pokedex")("pokemon")
   val moveCollection = MongoConnection()("pokedex")("moves")
   val evolutionCollection = MongoConnection()("pokedex")("evolutions")
-
+  val typeCollection = MongoConnection()("pokedex")("type")
 
   def getTestPokemon1(): MongoDBObject = {
 

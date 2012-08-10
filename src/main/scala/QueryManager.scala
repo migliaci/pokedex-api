@@ -1,6 +1,8 @@
 package com.ign.pokedex
 
 import com.mongodb.casbah.Imports._
+import com.mongodb.util.JSON
+import java.util
 
 /**
  * Created with IntelliJ IDEA.
@@ -138,6 +140,71 @@ object QueryManager {
     returnedItem = PokedexUtils.executeMultipleQuery(mongoEvolutionColl, evolutionChainQueryObject)
 
     returnedItem
+
+  }
+
+  def Query_EfficacyByType(type1: String, type2: String) : String = {
+    //if type2 == "", make easy query to find weaknesses.
+    val mongoTypeColl = PokedexTestGenerator.typeCollection;
+    var returnedItem = ""
+
+
+    if (type2 == "") {
+    val typeQueryObject = MongoDBObject("current_type" -> type1);
+    returnedItem = PokedexUtils.executeMultipleQuery(mongoTypeColl, typeQueryObject)
+    println(returnedItem)
+    returnedItem
+    } else {  //MwC (Manish will Cry)
+
+       //do lots of shit
+      var type1QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type1))
+      var type2QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type2))
+      var type1Efficacy = new Efficacy
+      var type2Efficacy = new Efficacy
+      var newEfficacy = new Efficacy
+      var key = ""
+      var value = 0.0
+      var types = new util.ArrayList[String]
+
+      //hackity hack, don't talk back
+      for(x <- type1QueryObject) {
+        key =  x.get("current_type").toString
+        value = ((x.get("damage_factor").toString.toFloat))
+        type1Efficacy.typeMap.put(key, value)
+        types.add(key)
+      }
+
+      for(y <- type2QueryObject) {
+        key =  y.get("current_type").toString
+        value = ((y.get("damage_factor").toString.toFloat))
+        type2Efficacy.typeMap.put(key, value)
+      }
+
+      var count = 0;
+      //there has to be a better way, but I don't know it yet.
+      while(count < type2Efficacy.typeMap.size) {
+
+        var xValue = type1Efficacy.typeMap.getOrElse(types.get(count), 0.0)
+        var yValue = type2Efficacy.typeMap.getOrElse(types.get(count), 0.0)
+        var total = (xValue * yValue)/100
+        newEfficacy.typeMap.put(types.get(count), total)
+        count += 1
+      }
+
+      println(newEfficacy.typeMap)
+
+      returnedItem = JSON.serialize(newEfficacy.typeMap)
+      println(returnedItem)
+
+      //LEEEROY JSON!
+      returnedItem
+
+    }
+
+
+    //turn the shit into json
+    //return the shit
+
 
   }
 

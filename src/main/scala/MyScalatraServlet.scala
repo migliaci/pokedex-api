@@ -143,8 +143,12 @@ WHERE types.identifier="normal"
 
   }
 
-  get("/types") {
-
+  get("/types/efficacy/type1/:type1/type2/:type2") {
+    response.setContentType("application/json")
+    println("in types test query")
+    var type1:String = params.getOrElse("type1", halt(400))
+    var type2:String = params.getOrElse("type2", halt(400))
+    response.getWriter.write(QueryManager.Query_EfficacyByType(type1, type2))
   }
 
   //types/
@@ -237,6 +241,8 @@ WHERE types.identifier="normal"
     println( "Bai" )
 
   }
+
+
 
   before {
     PokedexTestGenerator.setupTestDatabase()
