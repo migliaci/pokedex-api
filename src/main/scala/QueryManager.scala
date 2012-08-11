@@ -207,6 +207,12 @@ object QueryManager {
     var newEfficacy = new Efficacy
     var returnedItem = ""
 
+    if(typeQueryObject.length == 0) {
+      returnedItem = V3Utils.generateErrorJSON
+      println(returnedItem)
+      return returnedItem
+    }
+
     //hackity hack, don't talk back
     for(x <- typeQueryObject) {
       key =  x.get("current_type").toString
@@ -241,6 +247,12 @@ object QueryManager {
        //do lots of shit
       var type1QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type1))
       var type2QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type2))
+
+      if ((type1QueryObject.length == 0) || (type2QueryObject.length == 0)) {
+        returnedItem = V3Utils.generateErrorJSON
+        return returnedItem
+      }
+
       var type1Efficacy = new Efficacy
       var type2Efficacy = new Efficacy
       var newEfficacy = new Efficacy

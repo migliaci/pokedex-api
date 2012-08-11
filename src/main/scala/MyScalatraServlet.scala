@@ -13,6 +13,7 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.util.JSON
 import PokedexUtils._
 import scala.util.control.Breaks._
+import APIRequest._
 
 class MyScalatraServlet extends ScalatraServlet {
 
@@ -28,11 +29,59 @@ class MyScalatraServlet extends ScalatraServlet {
     </html>
   }
 
+  get("/pokemon") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processPokemonEndpoint(params.toMap[String, String], req, mongo))
+  }
+
+  get("/types/efficacy") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processTypesEndpoint(params.toMap[String, String], req, mongo))
+  }
+
+  get("/comparator") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processComparatorEndpoint(params.toMap[String, String], req, mongo))
+
+  }
+
+  get("/evolutions/pokemon") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processEvolutionsPokemonEndpoint(params.toMap[String, String], req, mongo))
+}
+
+  get("/evolutions/chain") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processEvolutionsChainEndpoint(params.toMap[String, String], req, mongo))
+  }
+
+  get("/moves") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processMovesEndpoint(params.toMap[String, String], req, mongo))
+  }
+
+  get("/moves/pokemon") {
+    val req = APIRequest(params.toMap[String,String])
+    response.setContentType("application/json")
+    response.getWriter.write(V3Utils.processMovesPokemonEndpoint(params.toMap[String, String], req, mongo))
+  }
+
+
+
+  /* PokePI V1
+
   get("/pokemon/unfiltered/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
     response.getWriter.write(QueryManager.Query_PokemonBySizeUnfiltered(size, mongo))
   }
+
 
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
@@ -191,7 +240,7 @@ class MyScalatraServlet extends ScalatraServlet {
     println( "Bai" )
 
   }
-
+  */
 
 
   before {
