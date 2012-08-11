@@ -17,6 +17,63 @@ object QueryManager {
   //maybe refactor to pass query into function, make queries static in queryManager and call them.
   //val r = $or ("metadata.type" -> "fire", "metadata.type"->"fuckyou")
 
+   def Query_PokemonBySizeUnfiltered(size : Int, mongoConn : MongoConnection) : String = {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.find(MongoDBObject("metadata.generation" -> 5)).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))
+    val returnedItem = PokedexUtils.computeJSON(queryObject)
+     returnedItem
+
+   }
+
+  def Query_PokemonBySizeAndGenerationFiltered(size : Int, generation: Int, mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val fieldsReturned = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+    val queryObject = pokemonColl.find(MongoDBObject("metadata.generation" -> generation), fieldsReturned).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))
+    val returnedItem = PokedexUtils.computeJSON(queryObject)
+    returnedItem
+
+  }
+
+  def Query_PokemonByRange(low : Int, high: Int, generation: Int, mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val fieldsReturned = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+    val queryObject = pokemonColl.find(("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation), fieldsReturned).sort(MongoDBObject("metadata.nationalId" -> 1))
+    val returnedItem = PokedexUtils.computeJSON(queryObject)
+    returnedItem
+
+    //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
+  }
+
+  def Query_PokemonByName(name : String, mongoConn : MongoConnection) : String = {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.findOne(MongoDBObject("metadata.name" -> name))
+    val returnedItem = JSON.serialize(queryObject)
+    returnedItem
+
+  }
+
+  def Query_PokemonByNameAndGeneration(name : String, generation: Int, mongoConn : MongoConnection) : String = {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.find(MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation))
+    val returnedItem = PokedexUtils.computeJSON(queryObject)
+    returnedItem
+  }
+
+  def Query_PokemonByNationalId(nationalId: Int, mongoConn: MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> nationalId))
+    val returnedItem = JSON.serialize(queryObject)
+    returnedItem
+
+  }
+
+  def Query_PokemonByNationalIdAndGeneration(nationalId: Int, generation: Int, mongoConn: MongoConnection) : String = {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.find(MongoDBObject("metadata.nationalId" -> nationalId, "metadata.generation" -> generation))
+    val returnedItem = PokedexUtils.computeJSON(queryObject)
+    returnedItem
+  }
+
   def Query_MovesBySingleParameter(param_name: String, param_val: String, mongoConn: MongoConnection) : String = {
     val mongoColl = mongoConn("pokedex")("moves")
     var returnedItem =""

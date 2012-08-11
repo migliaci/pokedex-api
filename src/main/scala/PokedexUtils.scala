@@ -4,6 +4,7 @@ import com.mongodb.QueryBuilder
 import com.mongodb.util.JSON
 import javax.servlet.http.HttpServletResponse
 
+
 /**
  * Created with IntelliJ IDEA.
  * User: mmigliacio
@@ -53,7 +54,45 @@ object PokedexUtils {
     var count = 0;
     val results = mongoColl.find(objectToQuery)
 
-    println("RESULTS LENGTH:" + results.length)
+    println("RESULTS LENGTH: " + results.length)
+    println("RESULTS CLASS: " + results.getClass())
+
+    returnedItem = this.computeJSON(results)
+
+    /*
+    if (results.length == 0) {
+      println("Returning zero elements")
+      //NOTE:  Need to discuss handling of what happens when no results are found.  Special JSON object?
+      returnedItem = "{}"
+      returnedItem
+    } else if (results.length == 1){
+      for (x <- results) {
+        returnedItem += JSON.serialize(x)
+      }
+      returnedItem
+    } else {
+      for (x <- results) {
+        if (count == 0) {
+          returnedItem += ("[" + JSON.serialize(x) + ",")
+        } else {
+          returnedItem += JSON.serialize(x) + ","
+        }
+        count += 1;
+      }
+
+      if (returnedItem != "") {
+        returnedItem = returnedItem.substring(0, returnedItem.length - 1)
+        returnedItem += "]";
+      }
+
+    }
+      */
+    returnedItem
+  }
+
+  def computeJSON(results : MongoCursor): String = {
+    var returnedItem = ""
+    var count = 0;
 
     if (results.length == 0) {
       println("Returning zero elements")

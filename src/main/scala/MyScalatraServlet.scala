@@ -17,140 +17,69 @@ import scala.util.control.Breaks._
 class MyScalatraServlet extends ScalatraServlet {
 
   var mongo = MongoConnection()
-  //var mongo = MongoConnection
 
   get("/") {
     <html>
       <body>
-        <h1>Hello, world!</h1>
-        Say
-        <a href="hello-scalate">hello to Scalate</a>
-        .
-        <h2>OH RLY?</h2>
+        <h1>Hello, Unova!</h1>
+        <img src="http://www.vgblogger.com/wp-content/uploads/2006/11/30/ShowYouPokemans.jpg" alt="Pokemon" /><br></br>
+        <h2>Say hello to our Pokemans.</h2>
       </body>
     </html>
   }
 
-
-  get("/hello/:name") {
-    // Matches "GET /hello/foo" and "GET /hello/bar"
-    // params("name") is "foo" or "bar"
-    <p>Hello,
-      {params("name")}
-    </p>
-  }
-  //pokemon by national Id
-  //
-  /*
-    SELECT types.identifier,
-	type_efficacy.damage_type_id,
-	type_efficacy.target_type_id,
-	type_efficacy.damage_factor
-FROM type_efficacy INNER JOIN types ON type_efficacy.damage_type_id = types.id
-WHERE types.identifier="normal"
-   */
-
   get("/pokemon/unfiltered/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
-    val pokeColl = mongo("pokedex")("pokemon")
-    val q  = MongoDBObject("metadata.generation" -> 5)
-    var jsonString = "["
-    for (x <- pokeColl.find(q).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
-      jsonString += (JSON.serialize(x)+",")
-    }
-    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+    response.getWriter.write(QueryManager.Query_PokemonBySizeUnfiltered(size, mongo))
   }
 
   get("/pokemon/all/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
-    val pokeColl = mongo("pokedex")("pokemon")
-    val q  = MongoDBObject("metadata.generation" -> 5)
-    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
-    var jsonString = "["
-    for (x <- pokeColl.find(q, fields).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
-      jsonString += (JSON.serialize(x)+",")
-    }
-    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+    response.getWriter.write(QueryManager.Query_PokemonBySizeAndGenerationFiltered(size, 5, mongo))
   }
 
   get("/pokemon/all/:size/:generation"){
     val size:Int = params.getOrElse("size", "20").toInt
     val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    val pokeColl = mongo("pokedex")("pokemon")
-    val q  = MongoDBObject("metadata.generation" -> generation)
-    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
-    var jsonString = "["
-    for (x <- pokeColl.find(q, fields).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))) {
-      jsonString += (JSON.serialize(x)+",")
-    }
-    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
+    response.getWriter.write(QueryManager.Query_PokemonBySizeAndGenerationFiltered(size, generation, mongo))
   }
 
   get("/pokemon/all/:low/to/:high/:generation"){
-    val low:Int = params.getOrElse("low", halt(400)).toInt
-    val high:Int = params.getOrElse("high", halt(400)).toInt
+    val low:Int = params.getOrElse("low", "1").toInt
+    val high:Int = params.getOrElse("high", "20").toInt
     val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    val pokeColl = mongo("pokedex")("pokemon")
-    val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
-    val fields = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
-    var jsonString = "["
-    for (x <- pokeColl.find(q, fields).sort(MongoDBObject("metadata.nationalId" -> 1))) {
-      jsonString += (JSON.serialize(x)+",")
-    }
-    response.getWriter.write(jsonString.substring(0, jsonString.length -1)+"]")
-
+    response.getWriter.write(QueryManager.Query_PokemonByRange(low, high, generation, mongo))
   }
 
   get("/pokemon/:name"){
-    response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
-    val pokeColl = mongo("pokedex")("pokemon")
-    val p = MongoDBObject("metadata.name" -> name)
-    pokeColl.findOne(p).foreach { x =>
-      response.getWriter.write(JSON.serialize(x))
-    //  println("Found a pokemon! %s".format(x("metadata")))
-    }
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByName(name, mongo))
   }
 
   get("/pokemon/national_id/:id"){
-    response.setContentType("application/json")
     val id:Int = params.getOrElse("id", "1").toInt
-    val pokeColl = mongo("pokedex")("pokemon")
-    val p = MongoDBObject("metadata.nationalId" -> id)
-    pokeColl.findOne(p).foreach { x =>
-      response.getWriter.write(JSON.serialize(x))
-      //  println("Found a pokemon! %s".format(x("metadata")))
-    }
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNationalId(id, mongo))
   }
 
   get("/pokemon/national_id/:id/generation/:generation"){
-    response.setContentType("application/json")
     val id:Int = params.getOrElse("id", "1").toInt
     val generation:Int = params.getOrElse("generation", "5").toInt
-    val pokeColl = mongo("pokedex")("pokemon")
-    val p = MongoDBObject("metadata.nationalId" -> id, "metadata.generation" -> generation)
-    pokeColl.findOne(p).foreach { x =>
-      response.getWriter.write(JSON.serialize(x))
-      //  println("Found a pokemon! %s".format(x("metadata")))
-    }
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
   }
 
   //pokemon/name/:name/generation/:generation?
   get("/pokemon/:name/generation/:generation"){
-    response.setContentType("application/json")
     val name:String = params.getOrElse("name", halt(400))
     val generation:Int = params.getOrElse("generation", "5").toInt
-    val pokeColl = mongo("pokedex")("pokemon")
-    val p = MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation)
-    println(p)
-    pokeColl.findOne(p).foreach { x =>
-      response.getWriter.write(JSON.serialize(x))
-      //  println("Found a pokemon! %s".format(x("metadata")))
-    }
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNameAndGeneration(name, generation, mongo))
   }
 
   get("/moves") {
