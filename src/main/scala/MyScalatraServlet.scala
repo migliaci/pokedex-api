@@ -165,6 +165,13 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
+  get("/comparator/pokemon1/:id1/pokemon2/:id2") {
+    response.setContentType("application/json")
+    val id1:Int = params.getOrElse("id1", halt(400)).toInt
+    val id2:Int = params.getOrElse("id2", halt(400)).toInt
+    response.getWriter.write(QueryManager.Query_ComparatorById(id1, id2, mongo))
+  }
+
   //evolutions/pokemon/national_id/id?
   //add one for evolutions/pokemon/name/name?
   get("/evolutions/pokemon/:national_id") {

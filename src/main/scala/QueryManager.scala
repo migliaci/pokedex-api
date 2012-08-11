@@ -285,4 +285,19 @@ object QueryManager {
 
   }
 
+  //NOTE: THIS IS DUMMY BULLSHIT.  NEEDS TO BE REMOVED ASAP.
+  def Query_ComparatorById(id1 : Int, id2 : Int, mongoConn : MongoConnection) : String = {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject1 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
+    val queryObject2 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
+    var comparatorJSON = "{" +
+    "\"" + "pokemon1" + "\"" + " : " +
+    PokedexUtils.computeJSON(queryObject1) + "," +
+      "\"" + "pokemon2" + "\"" + " : " +
+    PokedexUtils.computeJSON(queryObject2) + "," +
+      "\"" + "score" + "\"" + " : " + " 80 " + "}"
+    println(comparatorJSON)
+    comparatorJSON
+  }
+
 }
