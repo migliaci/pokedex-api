@@ -28,7 +28,7 @@ class MyScalatraServlet extends ScalatraServlet {
       </body>
     </html>
   }
-
+  /*
   get("/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
@@ -107,9 +107,8 @@ class MyScalatraServlet extends ScalatraServlet {
     }
   }
 
+  */
 
-
-  /* PokePI V1
 
   get("/pokemon/unfiltered/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
@@ -142,7 +141,7 @@ class MyScalatraServlet extends ScalatraServlet {
   get("/pokemon/:name"){
     val name:String = params.getOrElse("name", halt(400))
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByName(name, mongo))
+    response.getWriter.write(QueryManager.Query_PokemonByName(name.toLowerCase, mongo))
   }
 
   get("/pokemon/national_id/:id"){
@@ -163,7 +162,7 @@ class MyScalatraServlet extends ScalatraServlet {
     val name:String = params.getOrElse("name", halt(400))
     val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByNameAndGeneration(name, generation, mongo))
+    response.getWriter.write(QueryManager.Query_PokemonByNameAndGeneration(name.toLowerCase, generation, mongo))
   }
 
   get("/moves") {
@@ -275,7 +274,6 @@ class MyScalatraServlet extends ScalatraServlet {
     println( "Bai" )
 
   }
-  */
 
 
   before {
