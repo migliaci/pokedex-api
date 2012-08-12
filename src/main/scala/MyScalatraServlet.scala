@@ -32,44 +32,79 @@ class MyScalatraServlet extends ScalatraServlet {
   get("/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processPokemonEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processPokemonEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain pokemon information due to error in supplied parameters.")
+    } else {
+    response.getWriter.write(responseJSON)
+    }
   }
 
   get("/types/efficacy") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processTypesEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processTypesEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain type information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
   }
 
   get("/comparator") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processComparatorEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processComparatorEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain comparator information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
 
   }
 
   get("/evolutions/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processEvolutionsPokemonEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processEvolutionsPokemonEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain evolution information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
 }
 
   get("/evolutions/chain") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processEvolutionsChainEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processEvolutionsChainEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain evolution information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
   }
 
   get("/moves") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processMovesEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processMovesEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain move information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
   }
 
   get("/moves/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
-    response.getWriter.write(V3Utils.processMovesPokemonEndpoint(params.toMap[String, String], req, mongo))
+    val responseJSON = V3Utils.processMovesPokemonEndpoint(params.toMap[String, String], req, mongo)
+    if(responseJSON == "{}") {
+      halt(404, "Could not obtain move information due to error in supplied parameters.")
+    } else {
+      response.getWriter.write(responseJSON)
+    }
   }
 
 

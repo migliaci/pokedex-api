@@ -46,7 +46,11 @@ object QueryManager {
 
   def Query_PokemonByName(name : String, mongoConn : MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.findOne(MongoDBObject("metadata.name" -> name))
+    val queryObject = pokemonColl.findOne(MongoDBObject("slug" -> name))
+    if (queryObject.size == 0) {
+      return V3Utils.generateErrorJSON
+    }
+
     val returnedItem = JSON.serialize(queryObject)
     returnedItem
 
@@ -54,7 +58,7 @@ object QueryManager {
 
   def Query_PokemonByNameAndGeneration(name : String, generation: Int, mongoConn : MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.find(MongoDBObject("metadata.name" -> name, "metadata.generation" -> generation))
+    val queryObject = pokemonColl.find(MongoDBObject("slug" -> name, "metadata.generation" -> generation))
     val returnedItem = PokedexUtils.computeJSON(queryObject)
     returnedItem
   }
@@ -62,6 +66,10 @@ object QueryManager {
   def Query_PokemonByNationalId(nationalId: Int, mongoConn: MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> nationalId))
+    //if (queryObject.size == 0) {
+    //  return V3Utils.generateErrorJSON
+    //}
+
     val returnedItem = JSON.serialize(queryObject)
     returnedItem
 
@@ -299,6 +307,7 @@ object QueryManager {
 
   //NOTE: THIS IS DUMMY BULLSHIT.  NEEDS TO BE REMOVED ASAP.
   def Query_ComparatorById(id1 : Int, id2 : Int, mongoConn : MongoConnection) : String = {
+    //no error checking yet
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject1 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
     val queryObject2 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))

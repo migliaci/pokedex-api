@@ -19,8 +19,8 @@ package com.ign.pokedex
  */
 case class APIRequest(var startIndex: Int = -1,
                       var count: Int = -1,
-                      var sortBy: Option[String] = None, //field
-                      var sortOrder: Int = -1, //asc or desc
+                      var sortBy: Option[String] = None,
+                      var sortOrder: Int = -1,
                       var fields: List[String] = Nil,
                       var nationalId: Int = -1,
                       var name: String = "",
@@ -59,13 +59,13 @@ object APIRequest {
           try {
             req.startIndex = params(x).toInt
           } catch {
-            case e:NumberFormatException => // ignore
+            case e:NumberFormatException => req.startIndex = -1
           }
         case "count" =>
           try {
             req.count = params(x).toInt
           } catch {
-            case e:NumberFormatException => // ignore
+            case e:NumberFormatException => req.count = -1
           }
         case "sortBy" => req.sortBy = Some(params(x))
         case "sortOrder" if params(x).equals("asc") => req.sortOrder = 1
@@ -77,12 +77,27 @@ object APIRequest {
           } catch {
             case e:NumberFormatException => req.nationalId = -1
           }
-        case "generation" => req.generation = params(x).toInt
+        case "generation" =>
+          try {
+            req.generation = params(x).toInt
+          } catch {
+            case e:NumberFormatException => req.generation = -1
+          }
         case "expand" if params(x).equals("true") => req.expand = 1
         case "type1" => req.type1 = params(x)
         case "type2" => req.type2 = params(x)
         case "firstPokemonId" => req.firstPokemonId = params(x).toInt
+          try {
+            req.firstPokemonId = params(x).toInt
+          } catch {
+          case e:NumberFormatException => req.firstPokemonId = -1
+          }
         case "secondPokemonId" => req.secondPokemonId = params(x).toInt
+          try {
+            req.firstPokemonId = params(x).toInt
+          } catch {
+            case e:NumberFormatException => req.firstPokemonId = -1
+          }
         case "evolutionChainId" =>
           try {
           req.evolutionChainId = params(x).toInt

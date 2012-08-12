@@ -29,16 +29,17 @@ object V3Utils {
       } else if (!("".equals(req.name))) { //will return all details about a pokemon with name NAME
 
         //xxx/pokemon?name=[name]
-
+        println("calling QueryPokemonByName for pokemon named: " + req.name)
         resultingJSON = QueryManager.Query_PokemonByName(req.name.toLowerCase, mongo)
+        println("resulting JSON: " + resultingJSON)
       } else if (!("".equals(req.nationalId))) { //will return all details about a pokemon with nationalId NATIONALID
 
         //xxx/pokemon?nationalId=[nationalId]
 
         resultingJSON = QueryManager.Query_PokemonByNationalId(req.nationalId, mongo)
       } else {
-
         resultingJSON = generateErrorJSON
+        return resultingJSON
       }
     } else if (params.size == 2) {
 
@@ -95,12 +96,18 @@ object V3Utils {
       if (!("".equals(req.type1))) {
         //xxx/types/efficacy?type1=[type1]
         resultingJSON = QueryManager.Query_EfficacyBySingleType(req.type1.toLowerCase, mongo)
+      } else {
+        println("Error case!")
+        resultingJSON = generateErrorJSON
       }
 
     } else if (params.size == 2) {
       if (!("".equals(req.type1)) && !("".equals(req.type2))) {
         //xxx/types/efficacy?type1=[type1]&type2=[type2]
         resultingJSON = QueryManager.Query_EfficacyByMultipleType(req.type1.toLowerCase, req.type2.toLowerCase, mongo)
+      }  else {
+        println("Error case!")
+        resultingJSON = generateErrorJSON
       }
     } else {
       println("Error case!")
@@ -185,6 +192,7 @@ object V3Utils {
       resultingJSON = QueryManager.Query_AllMoves(mongo)
     } else if (params.size == 1) {
 
+
       if (!("".equals(req.moveName))) {
 
         //xxx/moves?moveName=[moveName]
@@ -225,24 +233,15 @@ object V3Utils {
 
       if ((!("".equals(req.moveId))) && !("".equals(req.pokemonMoveClass))) {
 
-        if (req.pokemonMoveClass.equals("tm")) {
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[tm]&generation=[5]
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[hm]&generation=[5]
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[level]&generation=[5]
 
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[tm]
-
-          resultingJSON = QueryManager.Query_PokemonByTMLearned(req.moveId, 5, mongo)
-        } else if (req.pokemonMoveClass.equals("hm")) {
-
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[hm]
-
-          resultingJSON = QueryManager.Query_PokemonByHMLearned(req.moveId, 5, mongo)
-        } else if (req.pokemonMoveClass.equals("level")) {
-
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass[level]
-
-          resultingJSON = QueryManager.Query_PokemonByLevelMoveLearned(req.moveId, 5, mongo)
-        } else {
-
-          resultingJSON = generateErrorJSON
+        req.pokemonMoveClass match {
+          case "tm" => resultingJSON = QueryManager.Query_PokemonByTMLearned(req.moveId, 5, mongo)
+          case "hm" => resultingJSON = QueryManager.Query_PokemonByHMLearned(req.moveId, 5, mongo)
+          case "level" => resultingJSON = QueryManager.Query_PokemonByLevelMoveLearned(req.moveId, 5, mongo)
+          case _ => resultingJSON = generateErrorJSON
         }
 
       } else if (!("".equals(req.moveId)) && (req.generation != -1)) {
@@ -258,24 +257,15 @@ object V3Utils {
 
       if ((!("".equals(req.moveId))) && !("".equals(req.pokemonMoveClass)) && (req.generation != -1)) {
 
-        if (req.pokemonMoveClass.equals("tm")) {
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[tm]&generation=[generation]
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[hm]&generation=[generation]
+        //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[level]&generation=[generation]
 
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[tm]&generation=[generation]
-
-          resultingJSON = QueryManager.Query_PokemonByTMLearned(req.moveId, req.generation, mongo)
-        } else if (req.pokemonMoveClass.equals("hm")) {
-
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[hm]&generation=[generation]
-
-          resultingJSON = QueryManager.Query_PokemonByHMLearned(req.moveId, req.generation, mongo)
-        } else if (req.pokemonMoveClass.equals("level")) {
-
-          //xxx/moves/pokemon?moveId=[moveId]&pokemonMoveClass=[level]&generation=[generation]
-
-          resultingJSON = QueryManager.Query_PokemonByLevelMoveLearned(req.moveId, req.generation, mongo)
-        } else {
-
-          resultingJSON = generateErrorJSON
+        req.pokemonMoveClass match {
+          case "tm" => resultingJSON = QueryManager.Query_PokemonByTMLearned(req.moveId, req.generation, mongo)
+          case "hm" => resultingJSON = QueryManager.Query_PokemonByHMLearned(req.moveId, req.generation, mongo)
+          case "level" => resultingJSON = QueryManager.Query_PokemonByLevelMoveLearned(req.moveId, req.generation, mongo)
+          case _ => resultingJSON = generateErrorJSON
         }
 
       }
