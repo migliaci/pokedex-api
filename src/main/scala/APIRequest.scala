@@ -59,13 +59,13 @@ object APIRequest {
           try {
             req.startIndex = params(x).toInt
           } catch {
-            case e:NumberFormatException => req.startIndex = -1
+            case e:NumberFormatException => req.startIndex = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
         case "count" =>
           try {
             req.count = params(x).toInt
           } catch {
-            case e:NumberFormatException => req.count = -1
+            case e:NumberFormatException => req.count = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
         case "sortBy" => req.sortBy = Some(params(x))
         case "sortOrder" if params(x).equals("asc") => req.sortOrder = 1
@@ -75,34 +75,34 @@ object APIRequest {
           try {
             req.nationalId = params(x).toInt
           } catch {
-            case e:NumberFormatException => req.nationalId = -1
+            case e:NumberFormatException => req.nationalId = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
         case "generation" =>
           try {
             req.generation = params(x).toInt
           } catch {
-            case e:NumberFormatException => req.generation = -1
+            case e:NumberFormatException => req.generation = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
         case "expand" if params(x).equals("true") => req.expand = 1
         case "type1" => req.type1 = params(x)
         case "type2" => req.type2 = params(x)
-        case "firstPokemonId" => req.firstPokemonId = params(x).toInt
+        case "firstPokemonId" =>
           try {
             req.firstPokemonId = params(x).toInt
           } catch {
-          case e:NumberFormatException => req.firstPokemonId = -1
+          case e:NumberFormatException => req.firstPokemonId = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
-        case "secondPokemonId" => req.secondPokemonId = params(x).toInt
+        case "secondPokemonId" =>
           try {
-            req.firstPokemonId = params(x).toInt
+            req.secondPokemonId = params(x).toInt
           } catch {
-            case e:NumberFormatException => req.firstPokemonId = -1
+            case e:NumberFormatException => req.secondPokemonId = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
           }
         case "evolutionChainId" =>
           try {
           req.evolutionChainId = params(x).toInt
         } catch {
-          case e:NumberFormatException => req.evolutionChainId = -1
+          case e:NumberFormatException => req.evolutionChainId = V3Utils.INVALID_NUMBER_FORMAT_PARAMETER
         }
         case "moveName" => req.moveName = params(x)
         case "moveCategory" => req.moveCategory = params(x)

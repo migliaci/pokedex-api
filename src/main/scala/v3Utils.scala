@@ -11,8 +11,9 @@ import com.mongodb.casbah.MongoConnection
 
 object V3Utils {
 
-  val invalidIntParameter = -1
-  val invalidStringParameter = ""
+  val INVALID_INT_PARAMETER = -1
+  val INVALID_STRING_PARAMETER = ""
+  val INVALID_NUMBER_FORMAT_PARAMETER = -2
 
   def processPokemonEndpoint(params: Map[String, String], req: APIRequest, mongo : MongoConnection): String = {
 
@@ -20,6 +21,7 @@ object V3Utils {
 
     if (params.size == 1) {
 
+      println("count: " + req.count)
       //ALL ENDPOINTS VERIFIED
       if (req.count != -1){ //will return filtered list of pokemon with nationalId 1 to COUNT
 
@@ -41,6 +43,12 @@ object V3Utils {
         resultingJSON = generateErrorJSON
         return resultingJSON
       }
+
+      if (req.count == -2) {
+        resultingJSON = generateErrorJSON
+        return resultingJSON
+      }
+
     } else if (params.size == 2) {
 
       //ALL ENDPOINTS VERIFIED
@@ -74,6 +82,11 @@ object V3Utils {
       } else {
         resultingJSON = generateErrorJSON
       }
+
+      if(req.startIndex == -2 || req.count == -2 || req.generation == -2) {
+        resultingJSON = generateErrorJSON
+      }
+
     } else if (params.size == 3) {
       // need query_pokemonbyrange for specified generation  (3 parameters)
       // need query_pokemonbysizeunfiltered for specified generation (3 parameters)
@@ -124,6 +137,8 @@ object V3Utils {
     if(params.size == 2) {
       if ((req.firstPokemonId != -1) && (req.secondPokemonId != -1)) {
         //xxx/comparator?firstPokemonId=[firstPokemonId]&secondPokemonId=[secondPokemonId]
+        println("firstId:" + req.firstPokemonId)
+        println("secondId:" + req.secondPokemonId)
         resultingJSON = QueryManager.Query_ComparatorById(req.firstPokemonId, req.secondPokemonId, mongo)
       }
     } else {

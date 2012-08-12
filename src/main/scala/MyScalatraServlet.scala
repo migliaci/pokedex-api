@@ -106,8 +106,8 @@ class MyScalatraServlet extends ScalatraServlet {
       response.getWriter.write(responseJSON)
     }
   }
-
   */
+
 
 
   get("/pokemon/unfiltered/:size"){
