@@ -50,13 +50,13 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
     }
   }
 
-  test("Comparator object can be queried") {
-    get("/comparator/pokemon1/1/pokemon2/25") {
-      status should equal(200)
-      response.body should include ("Bulbasaur")
-      response.body should include ("Pikachu")
-    }
-  }
+//  test("Comparator object can be queried") {
+//    get("/comparator/pokemon1/1/pokemon2/25") {
+//      status should equal(200)
+//      response.body should include ("Bulbasaur")
+//      response.body should include ("Pikachu")
+//    }
+//  }
 
   /*
   test("Pokemon object can be queried for id") {
