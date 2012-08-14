@@ -1,8 +1,8 @@
 package com.ign.pokedex
 
 import com.mongodb.casbah.Imports._
-import com.mongodb.util.JSON
 import java.util
+import com.mongodb.util.JSON
 
 /**
  * Created with IntelliJ IDEA.
@@ -311,12 +311,14 @@ object QueryManager {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject1 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
     val queryObject2 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
+
     var comparatorJSON = "{" +
     "\"" + "pokemon1" + "\"" + " : " +
     PokedexUtils.computeJSON(queryObject1) + "," +
       "\"" + "pokemon2" + "\"" + " : " +
     PokedexUtils.computeJSON(queryObject2) + "," +
       "\"" + "score" + "\"" + " : " + " 80 " + "}"
+
     println(comparatorJSON)
     comparatorJSON
   }

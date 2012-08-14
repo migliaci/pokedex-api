@@ -28,7 +28,113 @@ class MyScalatraServlet extends ScalatraServlet {
       </body>
     </html>
   }
-  /*
+
+  get("/pokemon"){
+    //val name:String = params.getOrElse("name", halt(400))
+    response.setContentType("application/json")
+    if(params.size == 0) {
+
+      response.getWriter.write(QueryManager.Query_PokemonBySizeAndGenerationFiltered(20, 5, mongo))
+
+    } else {
+      //bullshit
+      //processPokemonEndpoint(v3Utils)
+    }
+
+  }
+
+  //no objectId yet
+  //get("/pokemon/:objectId") {
+  //
+  //}
+
+  get("/pokemon/nationalId/:nationalId") {
+    val id:Int = params.getOrElse("id", "1").toInt
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNationalId(id, mongo))
+  }
+
+  get("/pokemon/slug/:slug") {
+    val slug:String = params.getOrElse("slug", halt(400))
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByName(slug.toLowerCase, mongo))
+  }
+
+  get("/pokemon/nationalId/:nationalId/generation/:generation") {
+    val id:Int = params.getOrElse("id", "1").toInt
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
+  }
+
+  get("/pokemon/slug/:slug/generation/:generation") {
+    val slug:String = params.getOrElse("slug", halt(400))
+    val generation:Int = params.getOrElse("generation", "5").toInt
+    response.setContentType("application/json")
+    response.getWriter.write(QueryManager.Query_PokemonByNameAndGeneration(slug.toLowerCase, generation, mongo))
+
+  }
+
+  //get("/types/efficacy") {
+  //
+  //}
+
+  //get("/types/efficacy/:objId") {
+  //
+  //}
+
+  get("/types/efficacy/type1/:type1") {
+    response.setContentType("application/json")
+    println("in types test query")
+    var type1:String = params.getOrElse("type1", halt(400))
+    response.getWriter.write(QueryManager.Query_EfficacyBySingleType(type1, mongo))
+  }
+
+  get("/types/efficacy/type1/:type1/type2/:type2") {
+    response.setContentType("application/json")
+    println("in types test query")
+    var type1:String = params.getOrElse("type1", halt(400))
+    var type2:String = params.getOrElse("type2", halt(400))
+    response.getWriter.write(QueryManager.Query_EfficacyByMultipleType(type1, type2, mongo))
+  }
+
+  get("/comparator") {
+    response.setContentType("application/json")
+    val idList:List[String] = params.getOrElse("pokemonIds", halt(400)).split(",").toList
+        println(idList.contains("25"))
+
+    if(idList.length == 2) {
+       val idArray = idList.toArray[String]
+       response.getWriter.write(QueryManager.Query_ComparatorById(idArray(0).toInt, idArray(1).toInt, mongo))
+    } else {
+
+      //BULLSHIT!
+    }
+
+  }
+
+
+  //get("/evolutions/pokemon/:object_id") {
+  //
+  //}
+
+  get("/evolutions/pokemon/nationalId/:national_id") {
+    response.setContentType("application/json")
+    val nationalId:Int = params.getOrElse("national_id", halt(400)).toInt
+    response.getWriter.write(QueryManager.Query_EvolutionsByNationalId(nationalId, mongo))
+  }
+
+  //get("/evolutions/chain/:object_id") {
+  //
+  //}
+
+  get("/evolutions/chain/chainId/:chain_id") {
+    response.setContentType("application/json")
+    val chainId:Int = params.getOrElse("chain_id", halt(400)).toInt
+    response.getWriter.write(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
+  }
+
+   /*
   get("/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
@@ -106,10 +212,8 @@ class MyScalatraServlet extends ScalatraServlet {
       response.getWriter.write(responseJSON)
     }
   }
-  */
-
-
-
+ */
+  /*
   get("/pokemon/unfiltered/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
     response.setContentType("application/json")
@@ -274,6 +378,68 @@ class MyScalatraServlet extends ScalatraServlet {
     println( "Bai" )
 
   }
+
+   */
+
+    get("/moves") {
+      response.setContentType("application/json")
+      response.getWriter.write(QueryManager.Query_AllMoves(mongo))
+    }
+
+    get("/moves/slug/:slug") {
+      response.setContentType("application/json")
+      val slug:String = params.getOrElse("slug", halt(400))
+      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", slug, mongo))
+    }
+
+    get("/moves/category/:category") {
+      response.setContentType("application/json")
+      val category:String = params.getOrElse("category", halt(400))
+      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.category", category, mongo))
+    }
+
+    get("/moves/type/:type") {
+      response.setContentType("application/json")
+      val moveType:String = params.getOrElse("type", halt(400))
+      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.type", moveType, mongo))
+    }
+
+    get("/moves/moveId/:moveId/pokemon") {
+      response.setContentType("application/json")
+      val moveId:String = params.getOrElse("id", "1").toString
+      println("inside move query for pokemon")
+      response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId, 5, mongo))
+    }
+
+    get("/moves/moveId/:moveId/pokemon/moveGroup/:moveGroup") {
+      response.setContentType("application/json")
+      val moveId:String = params.getOrElse("moveId", "1").toString
+      val moveGroup:String = params.getOrElse("moveGroup", "hm")
+
+      moveGroup match {
+        case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, 5, mongo))
+        case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, 5, mongo))
+        case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, 5, mongo))
+        case _ => V3Utils.generateErrorJSON
+      }
+
+    }
+
+    get("/moves/moveId/:moveId/pokemon/moveGroup/:moveGroup/generation/:generation") {
+      response.setContentType("application/json")
+      val moveId:String = params.getOrElse("moveId", "1").toString
+      val moveGroup:String = params.getOrElse("moveGroup", "hm")
+      val generation:Int = params.getOrElse("generation", "5").toInt
+
+      moveGroup match {
+        case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, generation, mongo))
+        case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, generation, mongo))
+        case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, generation, mongo))
+        case _ => V3Utils.generateErrorJSON
+      }
+
+    }
+
 
 
   before {
