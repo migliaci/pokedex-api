@@ -3,8 +3,11 @@ package com.ign.pokedex
 import com.mongodb.casbah.Imports._
 import java.util
 import com.mongodb.util.JSON
+
 import scala.math.abs
 import scala.math.max
+
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,11 +49,11 @@ object QueryManager {
     //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
   }
 
-  def Query_PokemonByName(name : String, mongoConn : MongoConnection) : String = {
+  def Query_PokemonByName( name : String, mongoConn : MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.findOne(MongoDBObject("slug" -> name))
     if (queryObject.size == 0) {
-      return V3Utils.generateErrorJSON
+       return V3Utils.generateErrorJSON("Pokemon name is invalid.")  //HERE'S THE BUG
     }
 
     val returnedItem = JSON.serialize(queryObject)
@@ -175,6 +178,16 @@ object QueryManager {
     returnedItem
   }
 
+  def Query_MovesBySize(size: Int, mongoConn: MongoConnection) : String = {
+
+    val moveColl = mongoConn("pokedex")("moves")
+    var returnedItem =""
+    val queryObject = moveColl.find("moveId" $exists true).limit(size)
+
+
+    returnedItem
+  }
+
   def Query_EvolutionsByNationalId(national_id : Int, mongoConn: MongoConnection) : String = {
 
     //NOTE:  THIS IS TEMPORARY
@@ -218,12 +231,11 @@ object QueryManager {
     var returnedItem = ""
 
     if(typeQueryObject.length == 0) {
-      returnedItem = V3Utils.generateErrorJSON
+      returnedItem = V3Utils.generateErrorJSON("Query returned zero elements.  Invalid parameter specified.")
       println(returnedItem)
       return returnedItem
     }
 
-    //hackity hack, don't talk back
     for(x <- typeQueryObject) {
       key =  x.get("current_type").toString
       value = ((x.get("damage_factor").toString.toFloat))
@@ -259,7 +271,7 @@ object QueryManager {
       var type2QueryObject = mongoTypeColl.find(MongoDBObject("opposed_type" -> type2))
 
       if ((type1QueryObject.length == 0) || (type2QueryObject.length == 0)) {
-        returnedItem = V3Utils.generateErrorJSON
+        returnedItem = V3Utils.generateErrorJSON("Query returned zero elements.  Invalid parameter specified.")
         return returnedItem
       }
 
@@ -270,7 +282,6 @@ object QueryManager {
       var value = 0.0
       var types = new util.ArrayList[String]
 
-      //hackity hack, don't talk back
       for(x <- type1QueryObject) {
         key =  x.get("current_type").toString
         value = ((x.get("damage_factor").toString.toFloat))
@@ -314,7 +325,7 @@ object QueryManager {
     val queryObject2 = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
 
     if (queryObject1.isEmpty || queryObject2.isEmpty)
-      return V3Utils.generateErrorJSON()
+      return V3Utils.generateErrorJSON("bad news")
 
     val Metadata = JSON.parse(queryObject1.get("metadata").toString).asInstanceOf[DBObject]
     val Type = JSON.parse(Metadata.get("type").toString).asInstanceOf[DBObject]

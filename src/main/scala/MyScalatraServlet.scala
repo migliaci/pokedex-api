@@ -14,8 +14,10 @@ import com.mongodb.util.JSON
 import PokedexUtils._
 import scala.util.control.Breaks._
 import APIRequest._
+import java.lang.NumberFormatException
 
 class MyScalatraServlet extends ScalatraServlet {
+
 
   var mongo = MongoConnection()
 
@@ -43,36 +45,68 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
-  //no objectId yet
-  //get("/pokemon/:objectId") {
-  //
-  //}
+  get("/pokemon/nationalId") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
 
   get("/pokemon/nationalId/:nationalId") {
-    val id:Int = params.getOrElse("id", "1").toInt
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByNationalId(id, mongo))
+    validateParameterLength(1, params.size)
+    val id = validateIntParameter("nationalId")
+    val returnValue = validateResults(QueryManager.Query_PokemonByNationalId(id, mongo))
+    response.getWriter.write(returnValue)
+  }
+
+  get("/pokemon/slug") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   get("/pokemon/slug/:slug") {
-    val slug:String = params.getOrElse("slug", halt(400))
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByName(slug.toLowerCase, mongo))
+    validateParameterLength(1, params.size)
+    val slug:String = validateStringParameter("slug")
+    val returnValue = validateResults(QueryManager.Query_PokemonByName(slug.toLowerCase, mongo))
+    response.getWriter.write(returnValue)
   }
 
   get("/pokemon/nationalId/:nationalId/generation/:generation") {
-    val id:Int = params.getOrElse("id", "1").toInt
-    val generation:Int = params.getOrElse("generation", "5").toInt
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
+    validateParameterLength(2, params.size)
+    val id:Int = validateIntParameter("nationalId")
+    val generation:Int = validateIntParameter("generation")
+    val returnValue = validateResults(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
+    response.getWriter.write(returnValue)
   }
 
   get("/pokemon/slug/:slug/generation/:generation") {
-    val slug:String = params.getOrElse("slug", halt(400))
-    val generation:Int = params.getOrElse("generation", "5").toInt
+    validateParameterLength(2, params.size)
+    val slug:String = validateStringParameter("slug")
+    val generation:Int = validateIntParameter("generation")
     response.setContentType("application/json")
-    response.getWriter.write(QueryManager.Query_PokemonByNameAndGeneration(slug.toLowerCase, generation, mongo))
+    val returnValue = validateResults(QueryManager.Query_PokemonByNameAndGeneration(slug.toLowerCase, generation, mongo))
+    response.getWriter.write(returnValue)
+  }
 
+  get("/pokemon/slug/:slug/generation") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
+
+  get("/pokemon/slug/generation/:generation") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
+
+  get("/pokemon/nationalId/:nationalId/generation") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
+
+  get("/pokemon/nationalId/generation/:generation") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   //get("/types/efficacy") {
@@ -83,26 +117,39 @@ class MyScalatraServlet extends ScalatraServlet {
   //
   //}
 
+  get("/types/efficacy/type1") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
+
+  get("/types/efficacy/type1/:type1/type2") {
+    response.setContentType("application/json")
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
+
+
   get("/types/efficacy/type1/:type1") {
     response.setContentType("application/json")
-    println("in types test query")
-    var type1:String = params.getOrElse("type1", halt(400))
-    response.getWriter.write(QueryManager.Query_EfficacyBySingleType(type1, mongo))
+    validateParameterLength(1, params.size)
+    var type1:String = validateStringParameter("type1")
+    val returnValue = validateResults(QueryManager.Query_EfficacyBySingleType(type1, mongo))
+    response.getWriter.write(returnValue)
   }
 
   get("/types/efficacy/type1/:type1/type2/:type2") {
     response.setContentType("application/json")
-    println("in types test query")
-    var type1:String = params.getOrElse("type1", halt(400))
-    var type2:String = params.getOrElse("type2", halt(400))
-    response.getWriter.write(QueryManager.Query_EfficacyByMultipleType(type1, type2, mongo))
+    validateParameterLength(2, params.size)
+    var type1:String = validateStringParameter("type1")
+    var type2:String = validateStringParameter("type2")
+    val returnValue = validateResults(QueryManager.Query_EfficacyByMultipleType(type1, type2, mongo))
+    response.getWriter.write(returnValue)
   }
+
 
   get("/comparator") {
     response.setContentType("application/json")
+    validateParameterLength(1, params.size)
     val idList:List[String] = params.getOrElse("pokemonIds", halt(400)).split(",").toList
-        println(idList.contains("25"))
-
     if(idList.length == 2) {
        val idArray = idList.toArray[String]
        response.getWriter.write(QueryManager.Query_ComparatorById(idArray(0).toInt, idArray(1).toInt, mongo))
@@ -118,11 +165,18 @@ class MyScalatraServlet extends ScalatraServlet {
   //
   //}
 
-  get("/evolutions/pokemon/nationalId/:national_id") {
+  get("/evolutions/pokemon/nationalId") {
     response.setContentType("application/json")
-    val nationalId:Int = params.getOrElse("national_id", halt(400)).toInt
-    response.getWriter.write(QueryManager.Query_EvolutionsByNationalId(nationalId, mongo))
+    failWithError("Required parameters do not exist.  URL is malformed.")
   }
+
+  get("/evolutions/pokemon/nationalId/:nationalId") {
+    response.setContentType("application/json")
+    val nationalId:Int = validateIntParameter("nationalId")
+    val returnValue = validateResults(QueryManager.Query_EvolutionsByNationalId(nationalId, mongo))
+    response.getWriter.write(returnValue)
+  }
+
 
   //get("/evolutions/chain/:object_id") {
   //
@@ -130,89 +184,76 @@ class MyScalatraServlet extends ScalatraServlet {
 
   get("/evolutions/chain/chainId/:chain_id") {
     response.setContentType("application/json")
-    val chainId:Int = params.getOrElse("chain_id", halt(400)).toInt
-    response.getWriter.write(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
-  }
-
-   /*
-  get("/pokemon") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processPokemonEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain pokemon information due to error in supplied parameters.")
-    } else {
-    response.getWriter.write(responseJSON)
-    }
-  }
-
-  get("/types/efficacy") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processTypesEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain type information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
-    }
-  }
-
-  get("/comparator") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processComparatorEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain comparator information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
-    }
+    val chainId:Int = validateIntParameter("chain_id")
+    val returnValue = validateResults(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
+    response.getWriter.write(returnValue)
 
   }
 
-  get("/evolutions/pokemon") {
-    val req = APIRequest(params.toMap[String,String])
+  get("/evolutions/chain/chainId") {
     response.setContentType("application/json")
-    val responseJSON = V3Utils.processEvolutionsPokemonEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain evolution information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
-    }
-}
+    failWithError("Required parameters do not exist.  URL is malformed.")
+  }
 
-  get("/evolutions/chain") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processEvolutionsChainEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain evolution information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
+  def validateIntParameter(parameterName : String) : Int = {
+    try {
+      println("parameterName: " +parameterName)
+      val parameter:Int = params.getOrElse(parameterName, halt(V3Utils.HALT_CODE)).toInt
+      println("parameter: " + parameter)
+        parameter
+    } catch {
+    case e:NumberFormatException => failWithError("Invalid "+ parameterName + "format detected in URL."); return -1
+  }
+
+  }
+
+  def validateStringParameter(parameterName : String) : String = {
+    try {
+      val parameter:String = params.getOrElse(parameterName, halt(V3Utils.HALT_CODE)).toString
+      parameter
+    } catch {
+      case e:Exception => failWithError( "Invalid "+ parameterName + "format detected in URL."); return ""
     }
   }
 
-  get("/moves") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processMovesEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain move information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
+  def validateParameterLength(expectedLength : Int, currentLength : Int) {
+
+    if (expectedLength != currentLength) {
+      failWithError("Required parameters do not exist.  URL is malformed.")
     }
+
   }
 
-  get("/moves/pokemon") {
-    val req = APIRequest(params.toMap[String,String])
-    response.setContentType("application/json")
-    val responseJSON = V3Utils.processMovesPokemonEndpoint(params.toMap[String, String], req, mongo)
-    if(responseJSON == "{}") {
-      halt(404, "Could not obtain move information due to error in supplied parameters.")
-    } else {
-      response.getWriter.write(responseJSON)
+  def validateResults(results : String) : String = {
+
+    //BROKEN
+    //val objectResult = JSON.parse(results).asInstanceOf[DBObject]
+    //
+    //val stringResult = objectResult.getOrElse("error", "null").toString
+    //if (!stringResult.equals("null")) {
+    //  failWithError(stringResult.toString)
+    //  return stringResult
+    //} else {
+    //  return objectResult.toString
+    //}
+
+    //hack fix
+    //we know this is terrible...we tried to use objects but didn't have time to get the casbah methods to return the objects we need.
+
+    if (results.contains("IGNPokedexError")) {
+      val stringResult = results.substring(results.indexOf(":"), results.length() - 1)
+      failWithError(stringResult)
+      return stringResult
     }
+
+    return results
   }
- */
+
+  def failWithError(message : String) {
+
+    halt(V3Utils.HALT_CODE, message)
+  }
+
   /*
   get("/pokemon/unfiltered/:size"){
     val size:Int = params.getOrElse("size", "20").toInt
@@ -370,26 +411,34 @@ class MyScalatraServlet extends ScalatraServlet {
 
   }
 
-  get("/evolutions/chain/:chain_id") {
-    response.setContentType("application/json")
-    println("in evolution query by chain")
-    val chainId:Int = params.getOrElse("chain_id", halt(400)).toInt
-    response.getWriter.write(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
-    println( "Bai" )
 
-  }
 
    */
 
     get("/moves") {
       response.setContentType("application/json")
-      response.getWriter.write(QueryManager.Query_AllMoves(mongo))
+      if(params.size == 0) {
+
+        val returnValue = validateResults(QueryManager.Query_MovesBySize(20, mongo))
+        response.getWriter.write(returnValue)
+
+      } else {
+        //bullshit
+        //processMoveEndpoint(v3Utils)
+      }
+      //just this previously
+      //response.getWriter.write(QueryManager.Query_AllMoves(mongo))
     }
 
     get("/moves/slug/:slug") {
       response.setContentType("application/json")
-      val slug:String = params.getOrElse("slug", halt(400))
+      val slug:String = validateStringParameter("slug")
       response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", slug, mongo))
+    }
+
+    get("/moves/slug") {
+      response.setContentType("application/json")
+      failWithError("Required parameters do not exist.  URL is malformed.")
     }
 
     get("/moves/category/:category") {
@@ -420,7 +469,7 @@ class MyScalatraServlet extends ScalatraServlet {
         case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, 5, mongo))
         case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, 5, mongo))
         case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, 5, mongo))
-        case _ => V3Utils.generateErrorJSON
+        case _ => V3Utils.generateErrorJSON("bad news")
       }
 
     }
@@ -435,7 +484,7 @@ class MyScalatraServlet extends ScalatraServlet {
         case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, generation, mongo))
         case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, generation, mongo))
         case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, generation, mongo))
-        case _ => V3Utils.generateErrorJSON
+        case _ => V3Utils.generateErrorJSON("bad news")
       }
 
     }

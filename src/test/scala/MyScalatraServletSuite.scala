@@ -195,12 +195,27 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
     }
   }
 
+
     test("Individual pokemon can be queried by name") {
       get("/pokemon/slug/bulbasaur") {
         status should equal(200)
         response.body should include ("Bulbasaur")
       }
     }
+
+    test("Bad slug is handled") {
+      get("/pokemon/slug/shit,man") {
+        status should equal(404)
+      }
+    }
+
+    test("Null slug is handled") {
+      get("/pokemon/slug") {
+        status should equal(404)
+      }
+    }
+
+
 
     test("Individual pokemon can be queried by national id") {
         get("/pokemon/nationalId/1") {
@@ -210,6 +225,19 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
     }
 
+    test("Bad national id is handled") {
+      get("/pokemon/nationalId/shit,man") {
+        status should equal(404)
+      }
+    }
+
+    test("Null national id is handled") {
+      get("/pokemon/nationalId") {
+        status should equal(404)
+      }
+    }
+
+
     test("Individual pokemon can be queried by national id and generation") {
         get("/pokemon/nationalId/1/generation/4") {
           status should equal(200)
@@ -218,6 +246,44 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
         }
 
       }
+
+    test("Bad nationalId is handled when specifying generation") {
+        get("/pokemon/nationalId/bullshit/generation/4") {
+          status should equal(404)
+        }
+      }
+
+    test("Bad generation is handled when specifying nationalId") {
+        get("/pokemon/nationalId/1/generation/bullshit") {
+        status should equal(404)
+      }
+    }
+
+    test("Bad generation is handled when specifying name") {
+        get("/pokemon/slug/bulbasaur/generation/bullshit"){
+          status should equal(404)
+        }
+    }
+
+    test("Null generation is handled when specifying name"){
+        get("/pokemon/slug/bulbasaur/generation") {
+          status should equal(404)
+        }
+
+    }
+
+    test("Null nationalId is handled when specifying generation") {
+      get("/pokemon/nationalId/generation/4") {
+        status should equal(404)
+      }
+    }
+
+    test("Null generation is handled when specifying nationalId") {
+      get("/pokemon/nationalId/generation/4") {
+        status should equal(404)
+      }
+    }
+
 
     test("Individual pokemon can be queried by name and generation") {
       get("/pokemon/slug/bulbasaur/generation/4") {
@@ -230,30 +296,54 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
     //test type object can be queried by object_id
 
-    test("Types object can be queried") {
-      get("/types/efficacy/type1/grass") {
+  test("Types object can be queried") {
+    get("/types/efficacy/type1/grass") {
         status should equal(200)
         response.body should include ("grass")
-      }
     }
+  }
 
-    test("Multiple types object can be queried") {
+  test("Multiple types object can be queried") {
       get("/types/efficacy/type1/fire/type2/dark") {
         status should equal(200)
         response.body should include ("dark")
         response.body should include ("fire")
-      }
     }
+  }
 
-    test("Comparator object can be queried") {
+  test("Bad single type is handled") {
+    get("/pokemon/nationalId/generation/4") {
+      status should equal(404)
+    }
+  }
+
+  test("Null single type is handled") {
+    get("/pokemon/nationalId/generation/4") {
+      status should equal(404)
+    }
+  }
+
+  test("Comparator object can be queried") {
       get("/comparator?pokemonIds=1,25") {
         status should equal(200)
         response.body should include ("Bulbasaur")
         response.body should include ("Pikachu")
-      }
     }
+  }
 
     //test evolution object can be queried by object_id
+
+  test("Bad nationalId is handled in evolution") {
+    get("/evolutions/pokemon/nationalId/bullshit") {
+      status should equal(404)
+    }
+  }
+
+  test("Null nationalId is handled in evolution") {
+    get("/evolutions/pokemon/nationalId") {
+      status should equal(404)
+    }
+  }
 
     test("Evolution object can be queried (by nationalId)") {
       get("/evolutions/pokemon/nationalId/1") {
@@ -273,15 +363,47 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
       }
     }
 
+  test("Bad chainId is handled in evolution") {
+    get("/evolutions/chain/chainId/bullshit") {
+      status should equal(404)
+    }
+  }
+
+  test("Null chainId is handled in evolution") {
+    get("/evolutions/chain/chainId") {
+      status should equal(404)
+    }
+  }
+
      //test moves can be queried
 
-    test("Moves list can be queried") {
+  test("Moves list can be queried") {
       get("/moves") {
         status should equal(200)
         response.body should include ("tackle")
       }
-    }
+  }
 
+  test("Moves list can be queried by name") {
+    get("/moves/slug/hyper-beam") {
+      status should equal(200)
+      response.body should include ("hyper-beam")
+    }
+  }
+
+  test("Bad move name is handled in moves") {
+    get("/moves/slug/bullshit") {
+      status should equal(404)
+    }
+  }
+
+  test("Null move name is handled in moves") {
+    get("/moves/slug") {
+      status should equal(404)
+    }
+  }
+
+    /*
     //test("Moves list can be queried by id") {
     //  get("/moves/id/id") {
     //    status should equal(200)
@@ -330,4 +452,6 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
         response.body should include ("Geodude")
       }
     }
+
+    */
 }

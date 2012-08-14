@@ -24,7 +24,7 @@ class PokedexV3Servlet extends ScalatraServlet {
       </body>
     </html>
   }
-
+ /*
   get("/pokemon") {
     val req = APIRequest(params.toMap[String,String])
     response.setContentType("application/json")
@@ -67,7 +67,7 @@ class PokedexV3Servlet extends ScalatraServlet {
     response.setContentType("application/json")
     response.getWriter.write(V3Utils.processMovesPokemonEndpoint(params.toMap[String, String], req, mongo))
   }
-
+   */
   before {
     PokedexTestGenerator.setupTestDatabase()
     mongo = MongoConnection()

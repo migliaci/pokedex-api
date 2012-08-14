@@ -62,9 +62,7 @@ object PokedexUtils {
     var count = 0;
 
     if (results.length == 0) {
-      println("Returning zero elements")
-      //NOTE:  Need to discuss handling of what happens when no results are found.  Special JSON object?
-      returnedItem = V3Utils.generateErrorJSON
+      returnedItem = V3Utils.generateErrorJSON("Query returned zero elements.  Invalid parameter specified.")
       returnedItem
     } else if (results.length == 1){
       for (x <- results) {

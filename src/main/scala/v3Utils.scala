@@ -1,5 +1,6 @@
 package com.ign.pokedex
 import com.mongodb.casbah.MongoConnection
+import org.scalatra.ScalatraServlet
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,7 +15,9 @@ object V3Utils {
   val INVALID_INT_PARAMETER = -1
   val INVALID_STRING_PARAMETER = ""
   val INVALID_NUMBER_FORMAT_PARAMETER = -2
-
+  val HALT_CODE = 404
+  val PARMS_DO_NOT_EXIST_MESSAGE = "Required parameters do not exist.  URL is malformed."
+  /*
   def processPokemonEndpoint(params: Map[String, String], req: APIRequest, mongo : MongoConnection): String = {
 
     var resultingJSON = ""
@@ -289,10 +292,11 @@ object V3Utils {
 
     resultingJSON
   }
+  */
 
-  def generateErrorJSON() : String = {
+  def generateErrorJSON(message : String) : String = {
 
-    return "{}"
+    return "{ " + "\"" + "IGNPokedexError" + "\"" + ":" + "\"" + message + "\"" + " }"
   }
 
 }
