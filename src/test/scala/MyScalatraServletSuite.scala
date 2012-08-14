@@ -166,7 +166,7 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
   */
 
   /* VFINAL */
-
+  /*
   test("Default pokemon list can be queried") {
     get("/pokemon") {
       status should equal(200)
@@ -380,7 +380,7 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
   test("Moves list can be queried") {
       get("/moves") {
         status should equal(200)
-        response.body should include ("tackle")
+        response.body should include ("feint")
       }
   }
 
@@ -390,7 +390,7 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
       response.body should include ("hyper-beam")
     }
   }
-
+    */
   test("Bad move name is handled in moves") {
     get("/moves/slug/bullshit") {
       status should equal(404)
@@ -403,7 +403,7 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
     }
   }
 
-    /*
+
     //test("Moves list can be queried by id") {
     //  get("/moves/id/id") {
     //    status should equal(200)
@@ -418,6 +418,12 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
       }
     }
 
+  test("Bad move category is handled in moves") {
+    get("/moves/category/bullshit") {
+      status should equal(404)
+    }
+  }
+
     test("Moves list can be queried by category") {
       get("/moves/category/special") {
         status should equal(200)
@@ -425,12 +431,20 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
       }
     }
 
+  test("Bad move type is handled in moves") {
+    get("/moves/type/bullshit") {
+      status should equal(404)
+    }
+  }
+
     test("Moves list can be queried by type") {
       get("/moves/type/fire") {
         status should equal(200)
         response.body should include ("fire-blast")
       }
     }
+
+
 
     test("Pokemon list can be queried by type") {
       get("/moves/moveId/1/pokemon") {
@@ -453,5 +467,5 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
       }
     }
 
-    */
+
 }

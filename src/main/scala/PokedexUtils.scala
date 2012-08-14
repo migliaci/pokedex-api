@@ -60,7 +60,7 @@ object PokedexUtils {
   def computeJSON(results : MongoCursor): String = {
     var returnedItem = ""
     var count = 0;
-
+     println("Results: " + results.length)
     if (results.length == 0) {
       returnedItem = V3Utils.generateErrorJSON("Query returned zero elements.  Invalid parameter specified.")
       returnedItem

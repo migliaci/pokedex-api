@@ -433,7 +433,8 @@ class MyScalatraServlet extends ScalatraServlet {
     get("/moves/slug/:slug") {
       response.setContentType("application/json")
       val slug:String = validateStringParameter("slug")
-      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.name", slug, mongo))
+      val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.name", slug, mongo))
+      response.getWriter.write(returnValue)
     }
 
     get("/moves/slug") {
@@ -443,14 +444,16 @@ class MyScalatraServlet extends ScalatraServlet {
 
     get("/moves/category/:category") {
       response.setContentType("application/json")
-      val category:String = params.getOrElse("category", halt(400))
-      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.category", category, mongo))
+      val category:String = validateStringParameter("category")
+      val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.category", category, mongo))
+      response.getWriter.write(returnValue)
     }
 
     get("/moves/type/:type") {
       response.setContentType("application/json")
-      val moveType:String = params.getOrElse("type", halt(400))
-      response.getWriter.write(QueryManager.Query_MovesBySingleParameter("metadata.type", moveType, mongo))
+      val moveType:String = validateStringParameter("type")
+      val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.type", moveType, mongo))
+      response.getWriter.write(returnValue)
     }
 
     get("/moves/moveId/:moveId/pokemon") {

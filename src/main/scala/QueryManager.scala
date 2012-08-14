@@ -183,7 +183,7 @@ object QueryManager {
     val moveColl = mongoConn("pokedex")("moves")
     var returnedItem =""
     val queryObject = moveColl.find("moveId" $exists true).limit(size)
-
+    returnedItem = PokedexUtils.computeJSON(queryObject)
 
     returnedItem
   }
