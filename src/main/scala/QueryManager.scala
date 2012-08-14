@@ -307,10 +307,8 @@ object QueryManager {
 
   }
 
-  //NOTE: THIS IS DUMMY BULLSHIT.  NEEDS TO BE REMOVED ASAP.
   def Query_ComparatorById(id1 : Int, id2 : Int, mongoConn : MongoConnection) : String = {
-    //no error checking yet
-    println("\n\n\n")
+
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject1 = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
     val queryObject2 = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
@@ -351,47 +349,23 @@ object QueryManager {
     // Pokemon1 type1 against pokemon2 efficacy
     if (pkmType2 == null){
       pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
-      println(queryObject1.get("slug")+" "+
-              pkmType1.toString.toLowerCase+" vs "+
-              queryObject2.get("slug")+" "+pdamage.toString
-      )
       pmax = pdamage
     }
     else {
-      pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
-      println(queryObject1.get("slug")+" "+
-        pkmType1.toString.toLowerCase+" vs "+
-        queryObject2.get("slug")+" "+pdamage.toString
-      )
       // pokemon1 type2 against pokemon2 efficacy
+      pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
       pdamage2 = p2EfficacyObject.get(pkmType2.toString.toLowerCase).toString.toFloat
-      println(queryObject1.get("slug")+" "+
-        pkmType2.toString.toLowerCase+" vs "+
-        queryObject2.get("slug")+" "+pdamage2.toString
-      )
       pmax = max(pdamage, pdamage2)
     }
     // Pokemon2 type1 against pokemon1 efficacy
     if (pkm2Type2 == null) {
       p2damage = p1EfficacyObject.get(pkm2Type1.toString.toLowerCase).toString.toFloat
-      println(queryObject2.get("slug")+" "+
-        pkm2Type1.toString.toLowerCase+" vs "+
-        queryObject1.get("slug")+" "+p2damage.toString
-      )
       p2max = p2damage
     }
     else {
       p2damage = p1EfficacyObject.get(pkm2Type1.toString.toLowerCase).toString.toFloat
-      println(queryObject2.get("slug")+" "+
-        pkm2Type1.toString.toLowerCase+" vs "+
-        queryObject1.get("slug")+" "+p2damage.toString
-      )
       // Pokemon2 type 2 against pokemon1 efficacy
       p2damage2 = p1EfficacyObject.get(pkm2Type2.toString.toLowerCase).toString.toFloat
-      println(queryObject2.get("slug")+" "+
-        pkm2Type2.toString.toLowerCase+" vs "+
-        queryObject1.get("slug")+" "+p2damage2.toString
-      )
       p2max = max(p2damage, p2damage2)
     }
 
@@ -413,36 +387,31 @@ object QueryManager {
     pkm2TotalStats += Metadata2.get("speed").toString.toFloat
 
     val statDiff = abs(pkm1TotalStats-pkm2TotalStats)
-    val typeDiff = abs(pmax-p2max)
     var battleScore = 0.0
-    println(queryObject1.get("slug")+" totalStats: "+pkm1TotalStats.toString )
-    println(queryObject2.get("slug")+" totalStats: "+pkm2TotalStats.toString )
-    println("Stat difference: "+statDiff.toString)
+    var battleOutcomeMessage = ""
 
     if (statDiff <= 100) {
       // Type wins
       battleScore = 90
       if (pmax > p2max){
         // pokemon 1 wins
-        println(queryObject1.get("slug")+" WINS because of TYPE efficacy! magnitude:"+typeDiff.toString)
+        battleOutcomeMessage = queryObject1.get("slug")+" has type advantage"
 
-      } else if (p2max > pmax) {
+      }
+      else if (p2max > pmax) {
         // pokemon 2 wins
-        println(queryObject2.get("slug")+" WINS because of TYPE efficacy! magnitude:"+typeDiff.toString)
-      } else if (p2max == pmax) {
+        battleOutcomeMessage = queryObject2.get("slug")+" has type advantage"
+      }
+      else if (p2max == pmax) {
         // tie
         if (pkm1TotalStats > pkm2TotalStats) {
           battleScore = 60
-          println("TIE but "+queryObject1.get("slug")+" has a slight stat advantage "+statDiff.toString)
-
-        } else if (pkm2TotalStats > pkm1TotalStats) {
-          println("TIE but "+queryObject2.get("slug")+" has a slight stat advantage "+statDiff.toString)
-
-        } else {
-
+          battleOutcomeMessage = queryObject1.get("slug")+" has a slight stat advantage"
         }
-      } else {
-        println("OMG/WTF/BBQ")
+        else if (pkm2TotalStats > pkm1TotalStats) {
+          battleScore = 60
+          battleOutcomeMessage = queryObject2.get("slug")+" has a slight stat advantage"
+        }
       }
     }
     else {
@@ -450,48 +419,32 @@ object QueryManager {
       battleScore = 90
       if (pkm1TotalStats > pkm2TotalStats){
         // pokemon 1 wins
-        println(queryObject1.get("slug")+" WINS because of higher STATS!")
+        battleOutcomeMessage = queryObject1.get("slug").toString+" has greater stats advantage"
       } else if (pkm2TotalStats > pkm1TotalStats){
-        println(queryObject2.get("slug")+" WINS because of higher STATS!")
+        battleOutcomeMessage = queryObject2.get("slug").toString+" has greater stats advantage"
       } else if (pkm2TotalStats == pkm1TotalStats){
-        println("battle of the century ends in a TIE")
-      } else{
-        println("OMG/WTF/BBQ")
+        battleScore = 50
+        battleOutcomeMessage = "too close to call!"
       }
     }
 
-    println("BattleScore: "+battleScore.toString)
+    var jsonA = ""
+    var jsonB = ""
 
-
-    println("\n\n\n")
-
-    /*
-    {
-
-    pokemon1: {[pokemon object}
-    pokemon2: {[pokemon object}
-    score: [integer value (]
-    winnerId: [winner's id]
-    winnerDescription: Explains why pokemon wins
-
-
+    queryObject1 foreach { x =>
+      jsonA = JSON.serialize(x)
     }
 
-     */
+    queryObject2 foreach { x =>
+      jsonB = JSON.serialize(x)
+    }
 
-
-    /*
-    var comparatorJSON = "{" +
-    "\"" + "pokemon1" + "\"" + " : " +
-    PokedexUtils.computeJSON(queryObject1) + "," +
-      "\"" + "pokemon2" + "\"" + " : " +
-    PokedexUtils.computeJSON(queryObject2) + "," +
-      "\"" + "score" + "\"" + " : " + " 80 " + "}"
-
-    println(comparatorJSON)
+    val comparatorJSON = "{" +
+      "\"pokemon1\":" +jsonA + "," +
+      "\"pokemon2\":" + jsonB + "," +
+      "\"score\":" + battleScore.toString + "," +
+      "\"outcomeMessage\":" + "\""+battleOutcomeMessage+"\"" +"}"
     comparatorJSON
-    */
-    ""
   }
 
 }
