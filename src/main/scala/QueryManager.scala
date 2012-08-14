@@ -3,6 +3,8 @@ package com.ign.pokedex
 import com.mongodb.casbah.Imports._
 import java.util
 import com.mongodb.util.JSON
+import scala.math.abs
+import scala.math.max
 
 /**
  * Created with IntelliJ IDEA.
@@ -305,21 +307,153 @@ object QueryManager {
 
   }
 
-  //NOTE: THIS IS DUMMY BULLSHIT.  NEEDS TO BE REMOVED ASAP.
   def Query_ComparatorById(id1 : Int, id2 : Int, mongoConn : MongoConnection) : String = {
-    //no error checking yet
+
     val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject1 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
-    val queryObject2 = pokemonColl.find(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
+    val queryObject1 = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> id1, "metadata.generation" -> 5))
+    val queryObject2 = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> id2, "metadata.generation" -> 5))
 
-    var comparatorJSON = "{" +
-    "\"" + "pokemon1" + "\"" + " : " +
-    PokedexUtils.computeJSON(queryObject1) + "," +
-      "\"" + "pokemon2" + "\"" + " : " +
-    PokedexUtils.computeJSON(queryObject2) + "," +
-      "\"" + "score" + "\"" + " : " + " 80 " + "}"
+    if (queryObject1.isEmpty || queryObject2.isEmpty)
+      return V3Utils.generateErrorJSON()
 
-    println(comparatorJSON)
+    val Metadata = JSON.parse(queryObject1.get("metadata").toString).asInstanceOf[DBObject]
+    val Type = JSON.parse(Metadata.get("type").toString).asInstanceOf[DBObject]
+    val Metadata2 = JSON.parse(queryObject2.get("metadata").toString).asInstanceOf[DBObject]
+    val Type2 = JSON.parse(Metadata2.get("type").toString).asInstanceOf[DBObject]
+    val pkmType1 = Type.get("type_1")
+    val pkmType2 = Type.get("type_2")
+    val pkm2Type1 = Type2.get("type_1")
+    val pkm2Type2 = Type2.get("type_2")
+    var pTypeEfficacy = ""
+    var p2TypeEfficacy = ""
+
+    if (pkmType2 == null)
+      pTypeEfficacy = Query_EfficacyBySingleType(pkmType1.toString.toLowerCase, mongoConn)
+    else
+      pTypeEfficacy = Query_EfficacyByMultipleType(pkmType1.toString.toLowerCase, pkmType2.toString.toLowerCase, mongoConn)
+
+    if (pkm2Type2 == null)
+      p2TypeEfficacy = Query_EfficacyBySingleType(pkm2Type1.toString.toLowerCase, mongoConn)
+    else
+      p2TypeEfficacy = Query_EfficacyByMultipleType(pkm2Type1.toString.toLowerCase, pkm2Type2.toString.toLowerCase, mongoConn)
+    val p1EfficacyObject = JSON.parse(pTypeEfficacy).asInstanceOf[DBObject]
+    val p2EfficacyObject = JSON.parse(p2TypeEfficacy).asInstanceOf[DBObject]
+
+    var pdamage = 0.0
+    var pdamage2 = 0.0
+    var pmax = 0.0
+    var p2damage = 0.0
+    var p2damage2 = 0.0
+    var p2max = 0.0
+
+    // Pokemon1 type1 against pokemon2 efficacy
+    if (pkmType2 == null){
+      pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
+      pmax = pdamage
+    }
+    else {
+      // pokemon1 type2 against pokemon2 efficacy
+      pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
+      pdamage2 = p2EfficacyObject.get(pkmType2.toString.toLowerCase).toString.toFloat
+      pmax = max(pdamage, pdamage2)
+    }
+    // Pokemon2 type1 against pokemon1 efficacy
+    if (pkm2Type2 == null) {
+      p2damage = p1EfficacyObject.get(pkm2Type1.toString.toLowerCase).toString.toFloat
+      p2max = p2damage
+    }
+    else {
+      p2damage = p1EfficacyObject.get(pkm2Type1.toString.toLowerCase).toString.toFloat
+      // Pokemon2 type 2 against pokemon1 efficacy
+      p2damage2 = p1EfficacyObject.get(pkm2Type2.toString.toLowerCase).toString.toFloat
+      p2max = max(p2damage, p2damage2)
+    }
+
+    var pkm1TotalStats = 0.0
+    var pkm2TotalStats = 0.0
+
+    pkm1TotalStats += Metadata.get("hp").toString.toFloat
+    pkm1TotalStats += Metadata.get("attack").toString.toFloat
+    pkm1TotalStats += Metadata.get("defense").toString.toFloat
+    pkm1TotalStats += Metadata.get("specialAttack").toString.toFloat
+    pkm1TotalStats += Metadata.get("specialDefense").toString.toFloat
+    pkm1TotalStats += Metadata.get("speed").toString.toFloat
+
+    pkm2TotalStats += Metadata2.get("hp").toString.toFloat
+    pkm2TotalStats += Metadata2.get("attack").toString.toFloat
+    pkm2TotalStats += Metadata2.get("defense").toString.toFloat
+    pkm2TotalStats += Metadata2.get("specialAttack").toString.toFloat
+    pkm2TotalStats += Metadata2.get("specialDefense").toString.toFloat
+    pkm2TotalStats += Metadata2.get("speed").toString.toFloat
+
+    val statDiff = abs(pkm1TotalStats-pkm2TotalStats)
+    val maxDamage = abs(pmax-p2max)
+    var battleScore = 0.0
+    var battleOutcomeMessage = ""
+
+    if (statDiff <= 100) {
+      // Type wins
+      println("\n\nmaxDamage"+statDiff)
+      if (maxDamage<=100) battleScore = 70
+      if (maxDamage>100) battleScore = 80
+      if (maxDamage>200) battleScore = 90
+      if (pmax > p2max){
+        // pokemon 1 wins
+        battleOutcomeMessage = queryObject1.get("slug")+" has type advantage"
+      }
+      else if (p2max > pmax) {
+        // pokemon 2 wins
+        battleOutcomeMessage = queryObject2.get("slug")+" has type advantage"
+      }
+      else if (p2max == pmax) {
+        // tie
+        if (pkm1TotalStats > pkm2TotalStats) {
+          battleScore = 60
+          battleOutcomeMessage = queryObject1.get("slug")+" has a slight stat advantage"
+        }
+        else if (pkm2TotalStats > pkm1TotalStats) {
+          battleScore = 60
+          battleOutcomeMessage = queryObject2.get("slug")+" has a slight stat advantage"
+        }
+        else if (pkm2TotalStats == pkm1TotalStats){
+          battleScore = 50
+          battleOutcomeMessage = "tie"
+        }
+      }
+    }
+    else {
+      // Stats wins
+      if (statDiff<=100) battleScore = 70
+      if (statDiff>100) battleScore = 80
+      if (statDiff>200) battleScore = 90
+      println("\n\nstatdiff"+statDiff)
+      if (pkm1TotalStats > pkm2TotalStats){
+        // pokemon 1 wins
+        battleOutcomeMessage = queryObject1.get("slug").toString+" has greater stats advantage"
+      } else if (pkm2TotalStats > pkm1TotalStats){
+        battleOutcomeMessage = queryObject2.get("slug").toString+" has greater stats advantage"
+      } else if (pkm2TotalStats == pkm1TotalStats){
+        battleScore = 50
+        battleOutcomeMessage = "too close to call!"
+      }
+    }
+
+    var jsonA = ""
+    var jsonB = ""
+
+    queryObject1 foreach { x =>
+      jsonA = JSON.serialize(x)
+    }
+
+    queryObject2 foreach { x =>
+      jsonB = JSON.serialize(x)
+    }
+
+    val comparatorJSON = "{" +
+      "\"pokemon1\":" +jsonA + "," +
+      "\"pokemon2\":" + jsonB + "," +
+      "\"score\":" + battleScore.toString + "," +
+      "\"outcomeMessage\":" + "\""+battleOutcomeMessage+"\"" +"}"
     comparatorJSON
   }
 
