@@ -387,16 +387,19 @@ object QueryManager {
     pkm2TotalStats += Metadata2.get("speed").toString.toFloat
 
     val statDiff = abs(pkm1TotalStats-pkm2TotalStats)
+    val maxDamage = abs(pmax-p2max)
     var battleScore = 0.0
     var battleOutcomeMessage = ""
 
     if (statDiff <= 100) {
       // Type wins
-      battleScore = 90
+      println("\n\nmaxDamage"+statDiff)
+      if (maxDamage<=100) battleScore = 70
+      if (maxDamage>100) battleScore = 80
+      if (maxDamage>200) battleScore = 90
       if (pmax > p2max){
         // pokemon 1 wins
         battleOutcomeMessage = queryObject1.get("slug")+" has type advantage"
-
       }
       else if (p2max > pmax) {
         // pokemon 2 wins
@@ -412,11 +415,18 @@ object QueryManager {
           battleScore = 60
           battleOutcomeMessage = queryObject2.get("slug")+" has a slight stat advantage"
         }
+        else if (pkm2TotalStats == pkm1TotalStats){
+          battleScore = 50
+          battleOutcomeMessage = "tie"
+        }
       }
     }
     else {
       // Stats wins
-      battleScore = 90
+      if (statDiff<=100) battleScore = 70
+      if (statDiff>100) battleScore = 80
+      if (statDiff>200) battleScore = 90
+      println("\n\nstatdiff"+statDiff)
       if (pkm1TotalStats > pkm2TotalStats){
         // pokemon 1 wins
         battleOutcomeMessage = queryObject1.get("slug").toString+" has greater stats advantage"
