@@ -402,6 +402,7 @@ object QueryManager {
     val pkm2Type2 = Type2.get("type_2")
     var pTypeEfficacy = ""
     var p2TypeEfficacy = ""
+    var winner = 0
 
     if (pkmType2 == null)
       pTypeEfficacy = Query_EfficacyBySingleType(pkmType1.toString.toLowerCase, mongoConn)
@@ -476,24 +477,29 @@ object QueryManager {
       if (pmax > p2max){
         // pokemon 1 wins
         battleOutcomeMessage = queryObject1.get("slug")+" has type advantage"
+        winner = Metadata.get("nationalId").toString.toInt
       }
       else if (p2max > pmax) {
         // pokemon 2 wins
         battleOutcomeMessage = queryObject2.get("slug")+" has type advantage"
+        winner = Metadata2.get("nationalId").toString.toInt
       }
       else if (p2max == pmax) {
         // tie
         if (pkm1TotalStats > pkm2TotalStats) {
           battleScore = 60
           battleOutcomeMessage = queryObject1.get("slug")+" has a slight stat advantage"
+          winner = Metadata.get("nationalId").toString.toInt
         }
         else if (pkm2TotalStats > pkm1TotalStats) {
           battleScore = 60
           battleOutcomeMessage = queryObject2.get("slug")+" has a slight stat advantage"
+          winner = Metadata2.get("nationalId").toString.toInt
         }
         else if (pkm2TotalStats == pkm1TotalStats){
           battleScore = 50
           battleOutcomeMessage = "tie"
+          winner = -1
         }
       }
     }
@@ -506,11 +512,14 @@ object QueryManager {
       if (pkm1TotalStats > pkm2TotalStats){
         // pokemon 1 wins
         battleOutcomeMessage = queryObject1.get("slug").toString+" has greater stats advantage"
+        winner = Metadata.get("nationalId").toString.toInt
       } else if (pkm2TotalStats > pkm1TotalStats){
         battleOutcomeMessage = queryObject2.get("slug").toString+" has greater stats advantage"
+        winner = Metadata2.get("nationalId").toString.toInt
       } else if (pkm2TotalStats == pkm1TotalStats){
         battleScore = 50
         battleOutcomeMessage = "too close to call!"
+        winner = -1
       }
     }
 
@@ -529,7 +538,8 @@ object QueryManager {
       "\"pokemon1\":" +jsonA + "," +
       "\"pokemon2\":" + jsonB + "," +
       "\"score\":" + battleScore.toString + "," +
-      "\"outcomeMessage\":" + "\""+battleOutcomeMessage+"\"" +"}"
+      "\"outcomeMessage\":" + "\""+battleOutcomeMessage+"\"," +
+      "\"winner\":"+ winner.toString +"}"
     comparatorJSON
   }
 
