@@ -62,15 +62,6 @@ object QueryManager {
       returnedItem = runQueryWithoutFields(startIndex, count, pokemonColl)
     }
 
-   /*
-    if (startIndex > 0) {
-      val queryObject = pokemonColl.find(MongoDBObject(), finalObject).skip(startIndex).limit(count)
-      returnedItem = PokedexUtils.computeJSON(queryObject)
-    } else {
-      val queryObject = pokemonColl.find(MongoDBObject(),finalObject).limit(count)
-      returnedItem = PokedexUtils.computeJSON(queryObject)
-    }
-    */
     returnedItem
   }
 
