@@ -42,11 +42,76 @@ object QueryManager {
   def Query_PokemonByRange(low : Int, high: Int, generation: Int, mongoConn : MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val fieldsReturned = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
+
     val queryObject = pokemonColl.find(("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation), fieldsReturned).sort(MongoDBObject("metadata.nationalId" -> 1))
     val returnedItem = PokedexUtils.computeJSON(queryObject)
     returnedItem
 
     //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
+  }
+
+  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String], mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    var returnedItem = ""
+
+    if (fieldList != Nil) {
+
+      returnedItem = runQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList))
+    } else {
+
+      returnedItem = runQueryWithoutFields(startIndex, count, pokemonColl)
+    }
+
+   /*
+    if (startIndex > 0) {
+      val queryObject = pokemonColl.find(MongoDBObject(), finalObject).skip(startIndex).limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    } else {
+      val queryObject = pokemonColl.find(MongoDBObject(),finalObject).limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    }
+    */
+    returnedItem
+  }
+
+  def buildDBObjectFromFields(fieldList: List[String]) : MongoDBObject = {
+    val builder = MongoDBObject.newBuilder
+
+    //compute the fieldList for the MongoDBObject
+    if (fieldList != Nil) {
+      fieldList.foreach(x =>
+        builder += x.toString -> 1
+      )
+    }
+     builder.result
+  }
+
+  def runQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject) : String = {
+
+    var returnedItem = ""
+
+    if (startIndex > 0) {
+      val queryObject = mongoColl.find(MongoDBObject(), fieldObject).skip(startIndex).limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    } else {
+      val queryObject = mongoColl.find(MongoDBObject(),fieldObject).limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    }
+    returnedItem
+  }
+
+  def runQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection) : String = {
+
+    var returnedItem = ""
+
+    if (startIndex > 0) {
+      val queryObject = mongoColl.find().skip(startIndex).limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    } else {
+      val queryObject = mongoColl.find().limit(count)
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    }
+    returnedItem
   }
 
   def Query_PokemonByName( name : String, mongoConn : MongoConnection) : String = {

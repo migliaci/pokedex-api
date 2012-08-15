@@ -17,6 +17,39 @@ object V3Utils {
   val INVALID_NUMBER_FORMAT_PARAMETER = -2
   val HALT_CODE = 404
   val PARMS_DO_NOT_EXIST_MESSAGE = "Required parameters do not exist.  URL is malformed."
+  val MINIMUM_COUNT = 20
+  val MINIMUM_START_INDEX = 0
+
+  def processPokemonEndpointWithParameters(params: Map[String, String], req: APIRequest, mongo:MongoConnection): String = {
+
+    var count = 0
+    var startIndex = 0
+    var resultingJSON = ""
+
+    if(req.count <= INVALID_INT_PARAMETER || req.startIndex <= INVALID_INT_PARAMETER) {
+      resultingJSON = generateErrorJSON("Invalid parameters detected. URL is malformed.")
+      println("Returning error JSON")
+      return resultingJSON
+    }
+
+    if(req.count != INVALID_INT_PARAMETER && req.count != INVALID_NUMBER_FORMAT_PARAMETER && req.count != 0) {
+        count = req.count
+    } else {
+        count = MINIMUM_COUNT
+    }
+
+    if (req.startIndex != INVALID_INT_PARAMETER && req.count != INVALID_NUMBER_FORMAT_PARAMETER) {
+        startIndex = req.startIndex
+    }  else {
+      startIndex = MINIMUM_START_INDEX
+    }
+
+    resultingJSON = QueryManager.Query_PokemonByParameters(startIndex, count, req.fields, mongo)
+    resultingJSON
+  }
+
+
+
   /*
   def processPokemonEndpoint(params: Map[String, String], req: APIRequest, mongo : MongoConnection): String = {
 

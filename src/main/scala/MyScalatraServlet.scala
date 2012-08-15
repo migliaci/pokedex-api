@@ -39,8 +39,9 @@ class MyScalatraServlet extends ScalatraServlet {
       response.getWriter.write(QueryManager.Query_PokemonBySizeAndGenerationFiltered(20, 5, mongo))
 
     } else {
-      //bullshit
-      //processPokemonEndpoint(v3Utils)
+      val req = APIRequest(params.toMap[String,String])
+      val returnValue = validateResults(V3Utils.processPokemonEndpointWithParameters(params.toMap[String,String], req, mongo))
+      response.getWriter.write(returnValue)
     }
 
   }

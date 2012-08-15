@@ -17,8 +17,8 @@ package com.ign.pokedex
  * extension of case classes. It is also unclear how the core apply() method
  * could be built upon.
  */
-case class APIRequest(var startIndex: Int = -1,
-                      var count: Int = -1,
+case class APIRequest(var startIndex: Int = 0,
+                      var count: Int = 0,
                       var sortBy: Option[String] = None,
                       var sortOrder: Int = -1,
                       var fields: List[String] = Nil,
