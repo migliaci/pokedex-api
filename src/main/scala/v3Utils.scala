@@ -44,7 +44,7 @@ object V3Utils {
       startIndex = MINIMUM_START_INDEX
     }
 
-    resultingJSON = QueryManager.Query_PokemonByParameters(startIndex, count, req.fields, mongo)
+    resultingJSON = QueryManager.Query_PokemonByParameters(startIndex, count, req.fields, req.sortBy, req.sortOrder, mongo)
     resultingJSON
   }
 

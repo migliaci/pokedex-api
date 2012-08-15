@@ -50,16 +50,26 @@ object QueryManager {
     //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
   }
 
-  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String], mongoConn : MongoConnection) : String =  {
+  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem = ""
 
     if (fieldList != Nil) {
+       if (sortBy == None) {
+        returnedItem = runUnsortedQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList))
+       } else {
 
-      returnedItem = runQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList))
+        println("trying to run sort query with fields")
+        returnedItem = runSortedQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
+       }
     } else {
+      if (sortBy == None) {
+      returnedItem = runUnsortedQueryWithoutFields(startIndex, count, pokemonColl)
+      } else {
 
-      returnedItem = runQueryWithoutFields(startIndex, count, pokemonColl)
+        println("trying to run sort query without fields")
+        returnedItem = runSortedQueryWithoutFields(startIndex, count, pokemonColl, sortBy, sortOrder)
+      }
     }
 
     returnedItem
@@ -77,7 +87,35 @@ object QueryManager {
      builder.result
   }
 
-  def runQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject) : String = {
+  def runSortedQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject, sortBy: Option[String], sortOrder: Int) : String = {
+
+    var returnedItem = ""
+
+    if (startIndex > 0) {
+      val queryObject = mongoColl.find(MongoDBObject(), fieldObject).skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    } else {
+      val queryObject = mongoColl.find(MongoDBObject(),fieldObject).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    }
+    returnedItem
+  }
+
+  def runSortedQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection, sortBy: Option[String], sortOrder: Int) : String = {
+
+    var returnedItem = ""
+
+    if (startIndex > 0) {
+      val queryObject = mongoColl.find().skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    } else {
+      val queryObject = mongoColl.find().limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      returnedItem = PokedexUtils.computeJSON(queryObject)
+    }
+    returnedItem
+  }
+
+  def runUnsortedQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject) : String = {
 
     var returnedItem = ""
 
@@ -91,7 +129,7 @@ object QueryManager {
     returnedItem
   }
 
-  def runQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection) : String = {
+  def runUnsortedQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection) : String = {
 
     var returnedItem = ""
 
