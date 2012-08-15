@@ -110,9 +110,12 @@ class MyScalatraServlet extends ScalatraServlet {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  //get("/types/efficacy") {
-  //
-  //}
+  get("/types/efficacy") {
+    response.setContentType("application/json")
+    val req = APIRequest(params.toMap[String,String])
+    val returnValue = validateResults(V3Utils.processTypesEndpointWithParameters(params.toMap[String,String], req, mongo))
+    response.getWriter.write(returnValue)
+  }
 
   //get("/types/efficacy/:objId") {
   //
@@ -165,6 +168,13 @@ class MyScalatraServlet extends ScalatraServlet {
   //get("/evolutions/pokemon/:object_id") {
   //
   //}
+  get("/evolutions") {
+
+    response.setContentType("application/json")
+    val req = APIRequest(params.toMap[String,String])
+    val returnValue = validateResults(V3Utils.processEvolutionsEndpointWithParameters(params.toMap[String,String], req, mongo))
+    response.getWriter.write(returnValue)
+  }
 
   get("/evolutions/pokemon/nationalId") {
     response.setContentType("application/json")
@@ -418,17 +428,9 @@ class MyScalatraServlet extends ScalatraServlet {
 
     get("/moves") {
       response.setContentType("application/json")
-      if(params.size == 0) {
-
-        val returnValue = validateResults(QueryManager.Query_MovesBySize(20, mongo))
-        response.getWriter.write(returnValue)
-
-      } else {
-        //bullshit
-        //processMoveEndpoint(v3Utils)
-      }
-      //just this previously
-      //response.getWriter.write(QueryManager.Query_AllMoves(mongo))
+      val req = APIRequest(params.toMap[String,String])
+      val returnValue = validateResults(V3Utils.processMovesEndpointWithParameters(params.toMap[String,String], req, mongo))
+      response.getWriter.write(returnValue)
     }
 
     get("/moves/slug/:slug") {

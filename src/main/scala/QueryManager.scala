@@ -50,6 +50,8 @@ object QueryManager {
     //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
   }
 
+
+  /*
   def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem = ""
@@ -73,6 +75,58 @@ object QueryManager {
     }
 
     returnedItem
+  }
+  */
+
+  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, pokemonColl)
+    returnedItem
+  }
+
+  def Query_MovesByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+
+    val movesColl = mongoConn("pokedex")("moves")
+    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, movesColl)
+    returnedItem
+  }
+
+  def Query_TypesByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+
+    val typesColl = mongoConn("pokedex")("type")
+    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, typesColl)
+    returnedItem
+  }
+
+  def Query_EvolutionsByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+    val evolutionsColl = mongoConn("pokedex")("evolutions")
+    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, evolutionsColl)
+    returnedItem
+  }
+
+  def Query_ListByParameters(startIndex : Int, count: Int, fieldList : List[String], sortBy: Option[String], sortOrder: Int, mongoColl : MongoCollection) : String =  {
+    var returnedItem = ""
+
+    if (fieldList != Nil) {
+      if (sortBy == None) {
+        returnedItem = runUnsortedQueryWithFields(startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
+      } else {
+
+        println("trying to run sort query with fields")
+        returnedItem = runSortedQueryWithFields(startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
+      }
+    } else {
+      if (sortBy == None) {
+        returnedItem = runUnsortedQueryWithoutFields(startIndex, count, mongoColl)
+      } else {
+
+        println("trying to run sort query without fields")
+        returnedItem = runSortedQueryWithoutFields(startIndex, count, mongoColl, sortBy, sortOrder)
+      }
+    }
+
+    returnedItem
+
   }
 
   def buildDBObjectFromFields(fieldList: List[String]) : MongoDBObject = {
