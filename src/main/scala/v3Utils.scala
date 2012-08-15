@@ -132,6 +132,34 @@ object V3Utils {
     resultingJSON
   }
 
+  def processComplexPokemonEndpointWithParameters(queryParm : String, queryParmValue: Int, params: Map[String, String], req: APIRequest, mongo:MongoConnection): String = {
+
+    var count = 0
+    var startIndex = 0
+    var resultingJSON = ""
+
+    if(req.count <= INVALID_INT_PARAMETER || req.startIndex <= INVALID_INT_PARAMETER) {
+      resultingJSON = generateErrorJSON("Invalid parameters detected. URL is malformed.")
+      println("Returning error JSON")
+      return resultingJSON
+    }
+
+    if(req.count != INVALID_INT_PARAMETER && req.count != INVALID_NUMBER_FORMAT_PARAMETER && req.count != 0) {
+      count = req.count
+    } else {
+      count = MINIMUM_COUNT
+    }
+
+    if (req.startIndex != INVALID_INT_PARAMETER && req.count != INVALID_NUMBER_FORMAT_PARAMETER) {
+      startIndex = req.startIndex
+    }  else {
+      startIndex = MINIMUM_START_INDEX
+    }
+
+    resultingJSON = QueryManager.Query_ComplexPokemonByParameters(queryParm, queryParmValue, startIndex, count, req.fields, req.sortBy, req.sortOrder, mongo)
+    resultingJSON
+  }
+
 
 
   /*

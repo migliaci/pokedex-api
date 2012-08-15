@@ -59,6 +59,14 @@ class MyScalatraServlet extends ScalatraServlet {
     response.getWriter.write(returnValue)
   }
 
+  get("/pokemon/generation/:generation") {
+    response.setContentType("application/json")
+    val gen = validateIntParameter("generation")
+    val req = APIRequest(params.toMap[String,String])
+    val returnValue = validateResults(V3Utils.processComplexPokemonEndpointWithParameters("metadata.generation", gen, params.toMap[String,String], req, mongo))
+    response.getWriter.write(returnValue)
+  }
+
   get("/pokemon/slug") {
     response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
@@ -97,6 +105,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
   get("/pokemon/slug/generation/:generation") {
     response.setContentType("application/json")
+    println("fell into the badness")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
@@ -107,6 +116,7 @@ class MyScalatraServlet extends ScalatraServlet {
 
   get("/pokemon/nationalId/generation/:generation") {
     response.setContentType("application/json")
+    println("fell into the badness")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 

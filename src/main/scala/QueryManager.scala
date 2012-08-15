@@ -78,9 +78,18 @@ object QueryManager {
   }
   */
 
+
+
   def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, pokemonColl)
+    returnedItem
+  }
+
+  def Query_ComplexPokemonByParameters(queryParm : String, queryParmValue: Int, startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    println("in ComplexPokemonQuery")
+    var returnedItem = Query_ComplexListByParameters(queryParm, queryParmValue, startIndex, count, fieldList, sortBy, sortOrder, pokemonColl)
     returnedItem
   }
 
@@ -109,25 +118,52 @@ object QueryManager {
 
     if (fieldList != Nil) {
       if (sortBy == None) {
-        returnedItem = runUnsortedQueryWithFields(startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
+        returnedItem = runUnsortedQueryWithFields("", 0, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
       } else {
 
         println("trying to run sort query with fields")
-        returnedItem = runSortedQueryWithFields(startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
+        returnedItem = runSortedQueryWithFields("", 0, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
       }
     } else {
       if (sortBy == None) {
-        returnedItem = runUnsortedQueryWithoutFields(startIndex, count, mongoColl)
+        returnedItem = runUnsortedQueryWithoutFields("", 0, startIndex, count, mongoColl)
       } else {
 
         println("trying to run sort query without fields")
-        returnedItem = runSortedQueryWithoutFields(startIndex, count, mongoColl, sortBy, sortOrder)
+        returnedItem = runSortedQueryWithoutFields("", 0, startIndex, count, mongoColl, sortBy, sortOrder)
       }
     }
 
     returnedItem
 
   }
+
+  def Query_ComplexListByParameters(queryParm : String, queryParmValue: Int, startIndex : Int, count: Int, fieldList : List[String], sortBy: Option[String], sortOrder: Int, mongoColl : MongoCollection) : String =  {
+    var returnedItem = ""
+
+    if (fieldList != Nil) {
+      if (sortBy == None) {
+        returnedItem = runUnsortedQueryWithFields(queryParm, queryParmValue, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
+      } else {
+
+        println("trying to run sort query with fields")
+        returnedItem = runSortedQueryWithFields(queryParm, queryParmValue, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
+      }
+    } else {
+      if (sortBy == None) {
+        returnedItem = runUnsortedQueryWithoutFields(queryParm, queryParmValue, startIndex, count, mongoColl)
+      } else {
+
+        println("trying to run sort query without fields")
+        returnedItem = runSortedQueryWithoutFields(queryParm, queryParmValue, startIndex, count, mongoColl, sortBy, sortOrder)
+      }
+    }
+
+    returnedItem
+
+  }
+
+  //pass those params into existing method.  If they exist, create a new MongoDBObject
 
   def buildDBObjectFromFields(fieldList: List[String]) : MongoDBObject = {
     val builder = MongoDBObject.newBuilder
@@ -141,57 +177,82 @@ object QueryManager {
      builder.result
   }
 
-  def runSortedQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject, sortBy: Option[String], sortOrder: Int) : String = {
+  def runSortedQueryWithFields(queryParm : String, queryParmValue: Int, startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject, sortBy: Option[String], sortOrder: Int) : String = {
 
     var returnedItem = ""
 
+    var mongoQuery = MongoDBObject()
+
+    if(!"".equals(queryParm)) {
+      mongoQuery = MongoDBObject(queryParm -> queryParmValue)
+    }
+
     if (startIndex > 0) {
-      val queryObject = mongoColl.find(MongoDBObject(), fieldObject).skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      val queryObject = mongoColl.find(mongoQuery, fieldObject).skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
       returnedItem = PokedexUtils.computeJSON(queryObject)
     } else {
-      val queryObject = mongoColl.find(MongoDBObject(),fieldObject).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      val queryObject = mongoColl.find(mongoQuery,fieldObject).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
       returnedItem = PokedexUtils.computeJSON(queryObject)
     }
     returnedItem
   }
 
-  def runSortedQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection, sortBy: Option[String], sortOrder: Int) : String = {
+  def runSortedQueryWithoutFields(queryParm : String, queryParmValue: Int, startIndex: Int, count: Int, mongoColl: MongoCollection, sortBy: Option[String], sortOrder: Int) : String = {
 
     var returnedItem = ""
 
+    var mongoQuery = MongoDBObject()
+
+    if(!"".equals(queryParm)) {
+      mongoQuery = MongoDBObject(queryParm -> queryParmValue)
+    }
+
     if (startIndex > 0) {
-      val queryObject = mongoColl.find().skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      val queryObject = mongoColl.find(mongoQuery).skip(startIndex).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
       returnedItem = PokedexUtils.computeJSON(queryObject)
     } else {
-      val queryObject = mongoColl.find().limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
+      val queryObject = mongoColl.find(mongoQuery).limit(count).sort(MongoDBObject(sortBy.get -> sortOrder))
       returnedItem = PokedexUtils.computeJSON(queryObject)
     }
     returnedItem
   }
 
-  def runUnsortedQueryWithFields(startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject) : String = {
+  def runUnsortedQueryWithFields(queryParm : String, queryParmValue: Int, startIndex: Int, count: Int, mongoColl: MongoCollection, fieldObject : MongoDBObject) : String = {
 
     var returnedItem = ""
 
+    var mongoQuery = MongoDBObject()
+
+    if(!"".equals(queryParm)) {
+      mongoQuery = MongoDBObject(queryParm -> queryParmValue)
+    }
+
+
     if (startIndex > 0) {
-      val queryObject = mongoColl.find(MongoDBObject(), fieldObject).skip(startIndex).limit(count)
+      val queryObject = mongoColl.find(mongoQuery, fieldObject).skip(startIndex).limit(count)
       returnedItem = PokedexUtils.computeJSON(queryObject)
     } else {
-      val queryObject = mongoColl.find(MongoDBObject(),fieldObject).limit(count)
+      val queryObject = mongoColl.find(mongoQuery,fieldObject).limit(count)
       returnedItem = PokedexUtils.computeJSON(queryObject)
     }
     returnedItem
   }
 
-  def runUnsortedQueryWithoutFields(startIndex: Int, count: Int, mongoColl: MongoCollection) : String = {
+  def runUnsortedQueryWithoutFields(queryParm : String, queryParmValue: Int, startIndex: Int, count: Int, mongoColl: MongoCollection) : String = {
 
     var returnedItem = ""
 
+    var mongoQuery = MongoDBObject()
+
+    if(!"".equals(queryParm)) {
+      mongoQuery = MongoDBObject(queryParm -> queryParmValue)
+    }
+
     if (startIndex > 0) {
-      val queryObject = mongoColl.find().skip(startIndex).limit(count)
+      val queryObject = mongoColl.find(mongoQuery).skip(startIndex).limit(count)
       returnedItem = PokedexUtils.computeJSON(queryObject)
     } else {
-      val queryObject = mongoColl.find().limit(count)
+      val queryObject = mongoColl.find(mongoQuery).limit(count)
       returnedItem = PokedexUtils.computeJSON(queryObject)
     }
     returnedItem
