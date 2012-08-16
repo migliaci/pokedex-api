@@ -22,94 +22,16 @@ object QueryManager {
   //maybe refactor to pass query into function, make queries static in queryManager and call them.
   //val r = $or ("metadata.type" -> "fire", "metadata.type"->"fuckyou")
 
-   def Query_PokemonBySizeUnfiltered(size : Int, mongoConn : MongoConnection) : String = {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.find(MongoDBObject("metadata.generation" -> 5)).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))
-    val returnedItem = PokedexUtils.computeJSON(queryObject)
-     returnedItem
-
-   }
-
-  def Query_PokemonBySizeAndGenerationFiltered(size : Int, generation: Int, mongoConn : MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    val fieldsReturned = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
-    val queryObject = pokemonColl.find(MongoDBObject("metadata.generation" -> generation), fieldsReturned).limit(size).sort(MongoDBObject("metadata.nationalId" -> 1))
-    val returnedItem = PokedexUtils.computeJSON(queryObject)
+  def Query_ObjectByParameters(objectString: String, startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+    val objectColl = mongoConn("pokedex")(objectString)
+    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, objectColl)
     returnedItem
 
   }
 
-  def Query_PokemonByRange(low : Int, high: Int, generation: Int, mongoConn : MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    val fieldsReturned = MongoDBObject("metadata.name" -> 1, "metadata.generation" -> 1, "metadata.nationalId" -> 1)
-
-    val queryObject = pokemonColl.find(("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation), fieldsReturned).sort(MongoDBObject("metadata.nationalId" -> 1))
-    val returnedItem = PokedexUtils.computeJSON(queryObject)
-    returnedItem
-
-    //val q: DBObject = ("metadata.nationalId" $lte high $gte low) ++ ("metadata.generation" -> generation)
-  }
-
-
-  /*
-  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    var returnedItem = ""
-
-    if (fieldList != Nil) {
-       if (sortBy == None) {
-        returnedItem = runUnsortedQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList))
-       } else {
-
-        println("trying to run sort query with fields")
-        returnedItem = runSortedQueryWithFields(startIndex, count, pokemonColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
-       }
-    } else {
-      if (sortBy == None) {
-      returnedItem = runUnsortedQueryWithoutFields(startIndex, count, pokemonColl)
-      } else {
-
-        println("trying to run sort query without fields")
-        returnedItem = runSortedQueryWithoutFields(startIndex, count, pokemonColl, sortBy, sortOrder)
-      }
-    }
-
-    returnedItem
-  }
-  */
-
-
-
-  def Query_PokemonByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, pokemonColl)
-    returnedItem
-  }
-
-  def Query_ComplexPokemonByParameters(queryParm : String, queryParmValue: Int, startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    println("in ComplexPokemonQuery")
+  def Query_ComplexObjectByParameters(objectString : String, queryParm : String, queryParmValue: Int, startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")(objectString)
     var returnedItem = Query_ComplexListByParameters(queryParm, queryParmValue, startIndex, count, fieldList, sortBy, sortOrder, pokemonColl)
-    returnedItem
-  }
-
-  def Query_MovesByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-
-    val movesColl = mongoConn("pokedex")("moves")
-    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, movesColl)
-    returnedItem
-  }
-
-  def Query_TypesByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-
-    val typesColl = mongoConn("pokedex")("type")
-    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, typesColl)
-    returnedItem
-  }
-
-  def Query_EvolutionsByParameters(startIndex : Int, count: Int, fieldList : List[String],   sortBy: Option[String], sortOrder: Int, mongoConn : MongoConnection) : String =  {
-    val evolutionsColl = mongoConn("pokedex")("evolutions")
-    var returnedItem = Query_ListByParameters(startIndex, count, fieldList, sortBy, sortOrder, evolutionsColl)
     returnedItem
   }
 
@@ -284,15 +206,22 @@ object QueryManager {
     returnedItem
 
   }
-  /*
+
   def Query_PokemonByObjectId(objectId: ObjectId, mongoConn: MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.findOne(MongoDBObject("_id" -> objectId ))
-    val returnedItem = JSON.serialize(queryObject)
+    var returnedItem = ""
+
+    if (queryObject.size == 0) {
+      returnedItem = V3Utils.generateErrorJSON("ObjectID does not exist.")
+      return returnedItem
+    }
+
+    returnedItem = JSON.serialize(queryObject)
     returnedItem
 
   }
-  */
+
   def Query_PokemonByNationalIdAndGeneration(nationalId: Int, generation: Int, mongoConn: MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.find(MongoDBObject("metadata.nationalId" -> nationalId, "metadata.generation" -> generation))
@@ -322,12 +251,8 @@ object QueryManager {
     var returnedItem =""
 
     //get all pokemon of generation 5, then search levelMoves and machineMoves
-    println("moveId:" + move_id)
-    println("levelMoves."+move_id)
     val subQuery = $or(("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true), ("moves.tutorMoves."+move_id) -> MongoDBObject("$exists" -> true), ("moves.hmMoves." + move_id) -> MongoDBObject("$exists" -> true), ("moves.tmMoves." + move_id) -> MongoDBObject("$exists" -> true))
     val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
-    //val firstQuery = mongoPokemonColl.find(allPokemonQueryObject)
-    //println("LENGTH:" + firstQuery.length)
     returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
 
 
@@ -445,7 +370,6 @@ object QueryManager {
 
     if(typeQueryObject.length == 0) {
       returnedItem = V3Utils.generateErrorJSON("Query returned zero elements.  Invalid parameter specified.")
-      println(returnedItem)
       return returnedItem
     }
 
@@ -618,7 +542,6 @@ object QueryManager {
 
     if (statDiff <= 100) {
       // Type wins
-      println("\n\nmaxDamage"+statDiff)
       if (maxDamage<=100) battleScore = 70
       if (maxDamage>100) battleScore = 80
       if (maxDamage>200) battleScore = 90
@@ -656,7 +579,6 @@ object QueryManager {
       if (statDiff<=100) battleScore = 70
       if (statDiff>100) battleScore = 80
       if (statDiff>200) battleScore = 90
-      println("\n\nstatdiff"+statDiff)
       if (pkm1TotalStats > pkm2TotalStats){
         // pokemon 1 wins
         battleOutcomeMessage = queryObject1.get("slug").toString+" has greater stats advantage"
