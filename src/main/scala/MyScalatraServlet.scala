@@ -38,21 +38,21 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
 
-  get("/pokemon/:object_id") { //changed objectId to object_id
+  get("/pokemon/:objectId") { //changed objectId to object_id
     validateParameterLength(1, params.size)
-    val id = validateObjectIdParameter("object_id")
+    val id = validateObjectIdParameter("objectId")
     val returnValue = validateResults(QueryManager.Query_PokemonByObjectId(id, mongo))
     response.getWriter.write(returnValue)
 
   }
 
-  get("/pokemon/national_id") { //changed nationalId to national_id
+  get("/pokemon/national-id") { //changed nationalId to national_id
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
   //don't camelcase url
-  get("/pokemon/national_id/:national_id") {   //changed nationalId to national_id
+  get("/pokemon/national-id/:nationalid") {   //changed nationalId to national_id
     validateParameterLength(1, params.size)
-    val id = validateIntParameter("national_id")
+    val id = validateIntParameter("nationalid")
     val returnValue = validateResults(QueryManager.Query_PokemonByNationalId(id, mongo))
     response.getWriter.write(returnValue)
   }
@@ -75,9 +75,9 @@ class MyScalatraServlet extends ScalatraServlet {
     response.getWriter.write(returnValue)
   }
 
-  get("/pokemon/national_id/:national_id/generation/:generation") { //changed nationalId to national_id
+  get("/pokemon/national-id/:nationalId/generation/:generation") {
     validateParameterLength(2, params.size)
-    val id:Int = validateIntParameter("national_id")
+    val id:Int = validateIntParameter("nationalId")
     val generation:Int = validateIntParameter("generation")
     val returnValue = validateResults(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
     response.getWriter.write(returnValue)
@@ -99,11 +99,11 @@ class MyScalatraServlet extends ScalatraServlet {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/pokemon/national_id/:national_id/generation") { //changed nationalId to national_id
+  get("/pokemon/national-id/:nationalId/generation") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/pokemon/national_id/generation/:generation") {
+  get("/pokemon/national-id/generation/:generation") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
@@ -165,12 +165,12 @@ class MyScalatraServlet extends ScalatraServlet {
     response.getWriter.write(returnValue)
   }
 
-  get("/evolutions/pokemon/national_id") {
+  get("/evolutions/pokemon/national-id") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/evolutions/pokemon/national_id/:national_id") {
-    val nationalId:Int = validateIntParameter("national_id")
+  get("/evolutions/pokemon/national-id/:nationalId") {
+    val nationalId:Int = validateIntParameter("nationalId")
     val returnValue = validateResults(QueryManager.Query_EvolutionsByNationalId(nationalId, mongo))
     response.getWriter.write(returnValue)
   }
@@ -180,14 +180,14 @@ class MyScalatraServlet extends ScalatraServlet {
   //
   //}
 
-  get("/evolutions/chain/chain_id/:chain_id") {
-    val chainId:Int = validateIntParameter("chain_id")
+  get("/evolutions/chain/chain-id/:chainId") {
+    val chainId:Int = validateIntParameter("chainId")
     val returnValue = validateResults(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
     response.getWriter.write(returnValue)
 
   }
 
-  get("/evolutions/chain/chain_id") {
+  get("/evolutions/chain/chain-id") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
@@ -285,15 +285,15 @@ class MyScalatraServlet extends ScalatraServlet {
       response.getWriter.write(returnValue)
     }
 
-    get("/moves/move_id/:move_id/pokemon") {
-      val moveId:String = params.getOrElse("move_id", "1").toString
+    get("/moves/move-id/:moveId/pokemon") {
+      val moveId:String = params.getOrElse("moveId", "1").toString
       response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId, 5, mongo))
     }
 
 
-    get("/moves/move_id/:move_id/pokemon/move_group/:move_group") {
-      val moveId:String = params.getOrElse("move_id", "1").toString
-      val moveGroup:String = params.getOrElse("move_group", "level")
+    get("/moves/move-id/:moveId/pokemon/move-group/:moveGroup") {
+      val moveId:String = params.getOrElse("moveId", "1").toString
+      val moveGroup:String = params.getOrElse("moveGroup", "level")
       val returnValue = validateResults(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, 5, mongo))
       response.getWriter.write(returnValue)
       //response.getWriter.write(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, 5, mongo))
@@ -301,9 +301,9 @@ class MyScalatraServlet extends ScalatraServlet {
 
     }
 
-    get("/moves/move_id/:move_id/pokemon/move_group/:move_group/generation/:generation") {
-      val moveId:String = params.getOrElse("move_id", "1").toString
-      val moveGroup:String = params.getOrElse("move_group", "level")
+    get("/moves/move-id/:moveId/pokemon/move-group/:moveGroup/generation/:generation") {
+      val moveId:String = params.getOrElse("moveId", "1").toString
+      val moveGroup:String = params.getOrElse("moveGroup", "level")
       val generation:Int = params.getOrElse("generation", "5").toInt
       val returnValue = validateResults(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, generation, mongo))
       response.getWriter.write(returnValue)

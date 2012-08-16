@@ -293,15 +293,6 @@ object QueryManager {
     returnedItem
   }
 
-  def Query_MovesBySize(size: Int, mongoConn: MongoConnection) : String = {
-
-    val moveColl = mongoConn("pokedex")("moves")
-    var returnedItem =""
-    val queryObject = moveColl.find("moveId" $exists true).limit(size)
-    returnedItem = PokedexUtils.computeJSON(queryObject)
-
-    returnedItem
-  }
 
   def Query_EvolutionsByNationalId(national_id : Int, mongoConn: MongoConnection) : String = {
 
