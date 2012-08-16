@@ -260,47 +260,24 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByLevelMoveLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
-
-    //NOTE:  THIS IS TEMPORARY
+  def Query_PokemonByMoveTypeLearned(move_type: String, move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
     val mongoPokemonColl = mongoConn("pokedex")("pokemon")
+    var moveClass = ""
+
+    move_type match {
+      case "tm" => moveClass = "tmMoves"
+      case "hm" => moveClass = "hmMoves"
+      case "level" => moveClass = "levelMoves"
+      case "tutor" => moveClass = "tutorMoves"
+      case _ =>  V3Utils.generateErrorJSON("Non-existant move type specified.")
+    }
+
+
     var returnedItem =""
     //get all pokemon of generation 5, then search levelMoves
-    val subQuery = ("moves.levelMoves."+move_id) -> MongoDBObject("$exists"-> true)
+    val subQuery = ("moves." + moveClass + "." +move_id) -> MongoDBObject("$exists"-> true)
     val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
     returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
-
-    returnedItem
-
-  }
-
-  def Query_PokemonByTMLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
-
-    //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
-    var returnedItem =""
-
-    //get all pokemon of generation 5, then search levelMoves
-    val subQuery = ("moves.tmMoves."+move_id) -> MongoDBObject("$exists"-> true)
-    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
-    returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
-
-
-    returnedItem
-
-  }
-
-  def Query_PokemonByHMLearned(move_id : String, generation: Int, mongoConn: MongoConnection) : String = {
-
-    //NOTE:  THIS IS TEMPORARY
-    val mongoPokemonColl = mongoConn("pokedex")("pokemon")
-    var returnedItem =""
-
-    //get all pokemon of generation 5, then search levelMoves
-    val subQuery = ("moves.hmMoves."+move_id) -> MongoDBObject("$exists"-> true)
-    val allPokemonQueryObject = MongoDBObject("metadata.generation" -> generation) ++ subQuery
-    returnedItem = PokedexUtils.executeMultipleQuery(mongoPokemonColl, allPokemonQueryObject)
-
 
     returnedItem
 
@@ -463,7 +440,7 @@ object QueryManager {
 
     if (queryObject1.isEmpty || queryObject2.isEmpty)
       return V3Utils.generateErrorJSON("bad news")
-
+    //naming
     val Metadata = JSON.parse(queryObject1.get("metadata").toString).asInstanceOf[DBObject]
     val Type = JSON.parse(Metadata.get("type").toString).asInstanceOf[DBObject]
     val Metadata2 = JSON.parse(queryObject2.get("metadata").toString).asInstanceOf[DBObject]
@@ -502,11 +479,13 @@ object QueryManager {
     }
     else {
       // pokemon1 type2 against pokemon2 efficacy
+      //get should return a float here
       pdamage = p2EfficacyObject.get(pkmType1.toString.toLowerCase).toString.toFloat
       pdamage2 = p2EfficacyObject.get(pkmType2.toString.toLowerCase).toString.toFloat
       pmax = max(pdamage, pdamage2)
     }
     // Pokemon2 type1 against pokemon1 efficacy
+    //match
     if (pkm2Type2 == null) {
       p2damage = p1EfficacyObject.get(pkm2Type1.toString.toLowerCase).toString.toFloat
       p2max = p2damage
@@ -539,7 +518,7 @@ object QueryManager {
     val maxDamage = abs(pmax-p2max)
     var battleScore = 0.0
     var battleOutcomeMessage = ""
-
+       //case statement
     if (statDiff <= 100) {
       // Type wins
       if (maxDamage<=100) battleScore = 70

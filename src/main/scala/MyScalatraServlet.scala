@@ -32,37 +32,32 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
   get("/pokemon"){
-    response.setContentType("application/json")
     val req = APIRequest(params.toMap[String,String])
     val returnValue = validateResults(V3Utils.processObjectEndpointWithParameters("pokemon", params.toMap[String,String], req, mongo))
     response.getWriter.write(returnValue)
   }
 
 
-  get("/pokemon/:objectId") {
-    response.setContentType("application/json")
+  get("/pokemon/:object_id") { //changed objectId to object_id
     validateParameterLength(1, params.size)
-    val id = validateObjectIdParameter("objectId")
+    val id = validateObjectIdParameter("object_id")
     val returnValue = validateResults(QueryManager.Query_PokemonByObjectId(id, mongo))
     response.getWriter.write(returnValue)
 
   }
 
-  get("/pokemon/nationalId") {
-    response.setContentType("application/json")
+  get("/pokemon/national_id") { //changed nationalId to national_id
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
-
-  get("/pokemon/nationalId/:nationalId") {
-    response.setContentType("application/json")
+  //don't camelcase url
+  get("/pokemon/national_id/:national_id") {   //changed nationalId to national_id
     validateParameterLength(1, params.size)
-    val id = validateIntParameter("nationalId")
+    val id = validateIntParameter("national_id")
     val returnValue = validateResults(QueryManager.Query_PokemonByNationalId(id, mongo))
     response.getWriter.write(returnValue)
   }
 
   get("/pokemon/generation/:generation") {
-    response.setContentType("application/json")
     val gen = validateIntParameter("generation")
     val req = APIRequest(params.toMap[String,String])
     val returnValue = validateResults(V3Utils.processComplexObjectEndpointWithParameters("pokemon", "metadata.generation", gen, params.toMap[String,String], req, mongo))
@@ -70,22 +65,19 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
   get("/pokemon/slug") {
-    response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   get("/pokemon/slug/:slug") {
-    response.setContentType("application/json")
     validateParameterLength(1, params.size)
     val slug:String = validateStringParameter("slug")
     val returnValue = validateResults(QueryManager.Query_PokemonByName(slug.toLowerCase, mongo))
     response.getWriter.write(returnValue)
   }
 
-  get("/pokemon/nationalId/:nationalId/generation/:generation") {
-    response.setContentType("application/json")
+  get("/pokemon/national_id/:national_id/generation/:generation") { //changed nationalId to national_id
     validateParameterLength(2, params.size)
-    val id:Int = validateIntParameter("nationalId")
+    val id:Int = validateIntParameter("national_id")
     val generation:Int = validateIntParameter("generation")
     val returnValue = validateResults(QueryManager.Query_PokemonByNationalIdAndGeneration(id, generation, mongo))
     response.getWriter.write(returnValue)
@@ -95,33 +87,27 @@ class MyScalatraServlet extends ScalatraServlet {
     validateParameterLength(2, params.size)
     val slug:String = validateStringParameter("slug")
     val generation:Int = validateIntParameter("generation")
-    response.setContentType("application/json")
     val returnValue = validateResults(QueryManager.Query_PokemonByNameAndGeneration(slug.toLowerCase, generation, mongo))
     response.getWriter.write(returnValue)
   }
 
   get("/pokemon/slug/:slug/generation") {
-    response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   get("/pokemon/slug/generation/:generation") {
-    response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/pokemon/nationalId/:nationalId/generation") {
-    response.setContentType("application/json")
+  get("/pokemon/national_id/:national_id/generation") { //changed nationalId to national_id
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/pokemon/nationalId/generation/:generation") {
-    response.setContentType("application/json")
+  get("/pokemon/national_id/generation/:generation") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   get("/types/efficacy") {
-    response.setContentType("application/json")
     val req = APIRequest(params.toMap[String,String])
     val returnValue = validateResults(V3Utils.processObjectEndpointWithParameters("type", params.toMap[String,String], req, mongo))
     response.getWriter.write(returnValue)
@@ -132,18 +118,15 @@ class MyScalatraServlet extends ScalatraServlet {
   //}
 
   get("/types/efficacy/type1") {
-    response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
   get("/types/efficacy/type1/:type1/type2") {
-    response.setContentType("application/json")
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
 
   get("/types/efficacy/type1/:type1") {
-    response.setContentType("application/json")
     validateParameterLength(1, params.size)
     var type1:String = validateStringParameter("type1")
     val returnValue = validateResults(QueryManager.Query_EfficacyBySingleType(type1, mongo))
@@ -151,7 +134,6 @@ class MyScalatraServlet extends ScalatraServlet {
   }
 
   get("/types/efficacy/type1/:type1/type2/:type2") {
-    response.setContentType("application/json")
     validateParameterLength(2, params.size)
     var type1:String = validateStringParameter("type1")
     var type2:String = validateStringParameter("type2")
@@ -161,7 +143,6 @@ class MyScalatraServlet extends ScalatraServlet {
 
 
   get("/comparator") {
-    response.setContentType("application/json")
     validateParameterLength(1, params.size)
     val idList:List[String] = params.getOrElse("pokemonIds", halt(400)).split(",").toList
     if(idList.length == 2) {
@@ -179,21 +160,17 @@ class MyScalatraServlet extends ScalatraServlet {
   //
   //}
   get("/evolutions") {
-
-    response.setContentType("application/json")
     val req = APIRequest(params.toMap[String,String])
     val returnValue = validateResults(V3Utils.processObjectEndpointWithParameters("evolutions", params.toMap[String,String], req, mongo))
     response.getWriter.write(returnValue)
   }
 
-  get("/evolutions/pokemon/nationalId") {
-    response.setContentType("application/json")
+  get("/evolutions/pokemon/national_id") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
-  get("/evolutions/pokemon/nationalId/:nationalId") {
-    response.setContentType("application/json")
-    val nationalId:Int = validateIntParameter("nationalId")
+  get("/evolutions/pokemon/national_id/:national_id") {
+    val nationalId:Int = validateIntParameter("national_id")
     val returnValue = validateResults(QueryManager.Query_EvolutionsByNationalId(nationalId, mongo))
     response.getWriter.write(returnValue)
   }
@@ -203,16 +180,14 @@ class MyScalatraServlet extends ScalatraServlet {
   //
   //}
 
-  get("/evolutions/chain/chainId/:chain_id") {
-    response.setContentType("application/json")
+  get("/evolutions/chain/chain_id/:chain_id") {
     val chainId:Int = validateIntParameter("chain_id")
     val returnValue = validateResults(QueryManager.Query_EvolutionsByChainId(chainId, mongo))
     response.getWriter.write(returnValue)
 
   }
 
-  get("/evolutions/chain/chainId") {
-    response.setContentType("application/json")
+  get("/evolutions/chain/chain_id") {
     failWithError("Required parameters do not exist.  URL is malformed.")
   }
 
@@ -283,71 +258,57 @@ class MyScalatraServlet extends ScalatraServlet {
 
 
     get("/moves") {
-      response.setContentType("application/json")
       val req = APIRequest(params.toMap[String,String])
       val returnValue = validateResults(V3Utils.processObjectEndpointWithParameters("moves", params.toMap[String,String], req, mongo))
       response.getWriter.write(returnValue)
     }
 
     get("/moves/slug/:slug") {
-      response.setContentType("application/json")
       val slug:String = validateStringParameter("slug")
       val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.name", slug, mongo))
       response.getWriter.write(returnValue)
     }
 
     get("/moves/slug") {
-      response.setContentType("application/json")
       failWithError("Required parameters do not exist.  URL is malformed.")
     }
 
     get("/moves/category/:category") {
-      response.setContentType("application/json")
       val category:String = validateStringParameter("category")
       val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.category", category, mongo))
       response.getWriter.write(returnValue)
     }
 
     get("/moves/type/:type") {
-      response.setContentType("application/json")
       val moveType:String = validateStringParameter("type")
       val returnValue = validateResults(QueryManager.Query_MovesBySingleParameter("metadata.type", moveType, mongo))
       response.getWriter.write(returnValue)
     }
 
-    get("/moves/moveId/:moveId/pokemon") {
-      response.setContentType("application/json")
-      val moveId:String = params.getOrElse("id", "1").toString
+    get("/moves/move_id/:move_id/pokemon") {
+      val moveId:String = params.getOrElse("move_id", "1").toString
       response.getWriter.write(QueryManager.Query_PokemonByMoveLearned(moveId, 5, mongo))
     }
 
-    //add tutor and refactor this into single list
-    get("/moves/moveId/:moveId/pokemon/moveGroup/:moveGroup") {
-      response.setContentType("application/json")
-      val moveId:String = params.getOrElse("moveId", "1").toString
-      val moveGroup:String = params.getOrElse("moveGroup", "hm")
 
-      moveGroup match {
-        case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, 5, mongo))
-        case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, 5, mongo))
-        case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, 5, mongo))
-        case _ => V3Utils.generateErrorJSON("bad news")
-      }
+    get("/moves/move_id/:move_id/pokemon/move_group/:move_group") {
+      val moveId:String = params.getOrElse("move_id", "1").toString
+      val moveGroup:String = params.getOrElse("move_group", "level")
+      val returnValue = validateResults(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, 5, mongo))
+      response.getWriter.write(returnValue)
+      //response.getWriter.write(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, 5, mongo))
+
 
     }
 
-    get("/moves/moveId/:moveId/pokemon/moveGroup/:moveGroup/generation/:generation") {
-      response.setContentType("application/json")
-      val moveId:String = params.getOrElse("moveId", "1").toString
-      val moveGroup:String = params.getOrElse("moveGroup", "hm")
+    get("/moves/move_id/:move_id/pokemon/move_group/:move_group/generation/:generation") {
+      val moveId:String = params.getOrElse("move_id", "1").toString
+      val moveGroup:String = params.getOrElse("move_group", "level")
       val generation:Int = params.getOrElse("generation", "5").toInt
+      val returnValue = validateResults(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, generation, mongo))
+      response.getWriter.write(returnValue)
+      //response.getWriter.write(QueryManager.Query_PokemonByMoveTypeLearned(moveGroup, moveId, generation, mongo))
 
-      moveGroup match {
-        case "tm" => response.getWriter.write(QueryManager.Query_PokemonByTMLearned(moveId, generation, mongo))
-        case "hm" => response.getWriter.write(QueryManager.Query_PokemonByHMLearned(moveId, generation, mongo))
-        case "level" => response.getWriter.write(QueryManager.Query_PokemonByLevelMoveLearned(moveId, generation, mongo))
-        case _ => V3Utils.generateErrorJSON("bad news")
-      }
 
     }
 
@@ -356,7 +317,9 @@ class MyScalatraServlet extends ScalatraServlet {
   before {
     PokedexTestGenerator.setupTestDatabase()
     mongo = MongoConnection()
-
+    response.setContentType("application/json")
+    //response content type
+    //caching
     //mongo.getDB()
 
   }
