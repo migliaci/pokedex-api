@@ -280,15 +280,19 @@ object QueryManager {
   def Query_PokemonByNationalId(nationalId: Int, mongoConn: MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> nationalId))
-    //if (queryObject.size == 0) {
-    //  return V3Utils.generateErrorJSON
-    //}
-
     val returnedItem = JSON.serialize(queryObject)
     returnedItem
 
   }
+  /*
+  def Query_PokemonByObjectId(objectId: ObjectId, mongoConn: MongoConnection) : String =  {
+    val pokemonColl = mongoConn("pokedex")("pokemon")
+    val queryObject = pokemonColl.findOne(MongoDBObject("_id" -> objectId ))
+    val returnedItem = JSON.serialize(queryObject)
+    returnedItem
 
+  }
+  */
   def Query_PokemonByNationalIdAndGeneration(nationalId: Int, generation: Int, mongoConn: MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
     val queryObject = pokemonColl.find(MongoDBObject("metadata.nationalId" -> nationalId, "metadata.generation" -> generation))

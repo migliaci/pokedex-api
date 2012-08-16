@@ -25,28 +25,6 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
   test("Default pokemon list can be queried") {
     get("/pokemon") {
       status should equal(200)
-      response.body should include ("Bulbasaur")
-      response.body should include ("Ivysaur")
-      response.body should include ("Venusaur")
-      response.body should include ("Charmander")
-      response.body should include ("Charmeleon")
-      response.body should include ("Charizard")
-      response.body should include ("Squirtle")
-      response.body should include ("Wartortle")
-      response.body should include ("Blastoise")
-      response.body should include ("Caterpie")
-      response.body should include ("Metapod")
-      response.body should include ("Butterfree")
-      response.body should include ("Weedle")
-      response.body should include ("Kakuna")
-      response.body should include ("Beedrill")
-      response.body should include ("Pidgey")
-      response.body should include ("Pidgeotto")
-      response.body should include ("Pidgeot")
-      response.body should include ("Rattata")
-      response.body should include ("Raticate")
-
-
     }
   }
 

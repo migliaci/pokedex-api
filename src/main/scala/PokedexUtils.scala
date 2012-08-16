@@ -89,44 +89,5 @@ object PokedexUtils {
     returnedItem
   }
 
-  /*
-  def serializeExistingObject(existingObject : MongoDBObject) : String =  {
 
-    var returnedItem = ""
-    var count = 0
-
-
-    println("RESULTS LENGTH:" + existingObject.)
-
-    if (results.length == 0) {
-      println("Returning zero elements")
-      //NOTE:  Need to discuss handling of what happens when no results are found.  Special JSON object?
-      returnedItem = "{}"
-      returnedItem
-    } else if (results.length == 1){
-      for (x <- results) {
-        returnedItem += JSON.serialize(x)
-      }
-      returnedItem
-    } else {
-      for (x <- results) {
-        if (count == 0) {
-          returnedItem += ("[" + JSON.serialize(x) + ",")
-        } else {
-          returnedItem += JSON.serialize(x) + ","
-        }
-        count += 1;
-      }
-
-      if (returnedItem != "") {
-        returnedItem = returnedItem.substring(0, returnedItem.length - 1)
-        returnedItem += "]";
-      }
-
-    }
-
-    returnedItem
-
-  }
-  */
 }
