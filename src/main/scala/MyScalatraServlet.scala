@@ -242,11 +242,13 @@ class MyScalatraServlet extends ScalatraServlet {
     //hack fix
     //we know this is terrible...we tried to use objects but didn't have time to get the casbah methods to return the objects we need.
 
+    /*
     if (results.contains("IGNPokedexError")) {
       val stringResult = results.substring(results.indexOf(":"), results.length() - 1)
       failWithError(stringResult)
       return stringResult
     }
+    */
 
     return results
   }

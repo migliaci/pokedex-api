@@ -182,7 +182,7 @@ object QueryManager {
 
   def Query_PokemonByName( name : String, mongoConn : MongoConnection) : String = {
     val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.findOne(MongoDBObject("slug" -> name))
+    val queryObject = pokemonColl.findOne(MongoDBObject("slug" -> name, "metadata.generation" -> 5))
     if (queryObject.size == 0) {
        return V3Utils.generateErrorJSON("Pokemon name is invalid.")  //HERE'S THE BUG
     }
@@ -201,7 +201,11 @@ object QueryManager {
 
   def Query_PokemonByNationalId(nationalId: Int, mongoConn: MongoConnection) : String =  {
     val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> nationalId))
+    val queryObject = pokemonColl.findOne(MongoDBObject("metadata.nationalId" -> nationalId, "metadata.generation" -> 5))
+    if (queryObject.size == 0) {
+      return V3Utils.generateErrorJSON("Pokemon name is invalid.")  //HERE'S THE BUG
+    }
+
     val returnedItem = JSON.serialize(queryObject)
     returnedItem
 

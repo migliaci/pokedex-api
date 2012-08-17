@@ -38,7 +38,8 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
     test("Bad slug is handled") {
       get("/pokemon/slug/shit,man") {
-        status should equal(404)
+        status should equal(200)
+        response.body should include ("IGNPokedexError")
       }
     }
 
@@ -58,11 +59,18 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
     }
 
-    test("Bad national id is handled") {
+    test("Bad national id is handled (format is wrong)") {
       get("/pokemon/national-id/shit,man") {
         status should equal(404)
       }
     }
+
+  test("Bad national id is handled (index out of range)") {
+    get("/pokemon/national-id/0") {
+      status should equal(200)
+      response.body should include ("IGNPokedexError")
+    }
+  }
 
     test("Null national id is handled") {
       get("/pokemon/national-id") {
@@ -88,7 +96,7 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
     test("Bad generation is handled when specifying nationalId") {
         get("/pokemon/national-id/1/generation/bullshit") {
-        status should equal(404)
+          status should equal(404)
       }
     }
 
@@ -143,16 +151,19 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
   }
 
   test("Bad single type is handled") {
-    get("/pokemon/national-id/generation/4") {
-      status should equal(404)
+    get("/types/efficacy/type1/fuckyou") {
+      status should equal(200)
+      response.body should include ("IGNPokedexError")
     }
   }
 
+  /*
   test("Null single type is handled") {
-    get("/pokemon/national-id/generation/4") {
+    get("/types/efficacy") {
       status should equal(404)
     }
   }
+  */
 
   test("Comparator object can be queried") {
       get("/comparator?pokemonIds=1,25") {
@@ -222,7 +233,8 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
   test("Bad move name is handled in moves") {
     get("/moves/slug/bullshit") {
-      status should equal(404)
+      status should equal(200)
+      response.body should include ("IGNPokedexError")
     }
   }
 
@@ -242,7 +254,8 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
   test("Bad move category is handled in moves") {
     get("/moves/category/bullshit") {
-      status should equal(404)
+      status should equal(200)
+      response.body should include ("IGNPokedexError")
     }
   }
 
@@ -255,7 +268,8 @@ class MyScalatraServletSuite extends ScalatraFunSuite with ShouldMatchers {
 
   test("Bad move type is handled in moves") {
     get("/moves/type/bullshit") {
-      status should equal(404)
+      status should equal(200)
+      response.body should include ("IGNPokedexError")
     }
   }
 
