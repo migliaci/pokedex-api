@@ -211,9 +211,10 @@ object QueryManager {
 
   }
 
-  def Query_PokemonByObjectId(objectId: ObjectId, mongoConn: MongoConnection) : String =  {
-    val pokemonColl = mongoConn("pokedex")("pokemon")
-    val queryObject = pokemonColl.findOne(MongoDBObject("_id" -> objectId ))
+
+  def Query_ObjectByObjectId(objectString: String, objectId: ObjectId, mongoConn: MongoConnection) : String =  {
+    val objectColl = mongoConn("pokedex")(objectString)
+    val queryObject = objectColl.findOne(MongoDBObject("_id" -> objectId ))
     var returnedItem = ""
 
     if (queryObject.size == 0) {

@@ -41,7 +41,31 @@ class MyScalatraServlet extends ScalatraServlet {
   get("/pokemon/:objectId") { //changed objectId to object_id
     validateParameterLength(1, params.size)
     val id = validateObjectIdParameter("objectId")
-    val returnValue = validateResults(QueryManager.Query_PokemonByObjectId(id, mongo))
+    val returnValue = validateResults(QueryManager.Query_ObjectByObjectId("pokemon", id, mongo))
+    response.getWriter.write(returnValue)
+
+  }
+
+  get("/types/efficacy/:objectId") { //changed objectId to object_id
+    validateParameterLength(1, params.size)
+    val id = validateObjectIdParameter("objectId")
+    val returnValue = validateResults(QueryManager.Query_ObjectByObjectId("type", id, mongo))
+    response.getWriter.write(returnValue)
+
+  }
+
+  get("/evolutions/:objectId") { //changed objectId to object_id
+    validateParameterLength(1, params.size)
+    val id = validateObjectIdParameter("objectId")
+    val returnValue = validateResults(QueryManager.Query_ObjectByObjectId("evolutions", id, mongo))
+    response.getWriter.write(returnValue)
+
+  }
+
+  get("/moves/:objectId") { //changed objectId to object_id
+    validateParameterLength(1, params.size)
+    val id = validateObjectIdParameter("objectId")
+    val returnValue = validateResults(QueryManager.Query_ObjectByObjectId("moves", id, mongo))
     response.getWriter.write(returnValue)
 
   }
