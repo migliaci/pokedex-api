@@ -696,7 +696,7 @@ object QueryManager {
 
     } else {
 
-    while(pkm1Health > 0 || pkm2Health > 0) {
+    while(pkm1Health > 0 && pkm2Health > 0) {
 
       println("In the Loop! pkm1Health: " + pkm1Health)
       println("In the Loop! pkm2Health:" + pkm2Health)
