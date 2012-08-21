@@ -43,16 +43,12 @@ object QueryManager {
       if (sortBy == None) {
         returnedItem = runUnsortedQueryWithFields("", 0, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
       } else {
-
-        println("trying to run sort query with fields")
         returnedItem = runSortedQueryWithFields("", 0, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
       }
     } else {
       if (sortBy == None) {
         returnedItem = runUnsortedQueryWithoutFields("", 0, startIndex, count, mongoColl)
       } else {
-
-        println("trying to run sort query without fields")
         returnedItem = runSortedQueryWithoutFields("", 0, startIndex, count, mongoColl, sortBy, sortOrder)
       }
     }
@@ -68,16 +64,12 @@ object QueryManager {
       if (sortBy == None) {
         returnedItem = runUnsortedQueryWithFields(queryParm, queryParmValue, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList))
       } else {
-
-        println("trying to run sort query with fields")
         returnedItem = runSortedQueryWithFields(queryParm, queryParmValue, startIndex, count, mongoColl, buildDBObjectFromFields(fieldList), sortBy, sortOrder)
       }
     } else {
       if (sortBy == None) {
         returnedItem = runUnsortedQueryWithoutFields(queryParm, queryParmValue, startIndex, count, mongoColl)
       } else {
-
-        println("trying to run sort query without fields")
         returnedItem = runSortedQueryWithoutFields(queryParm, queryParmValue, startIndex, count, mongoColl, sortBy, sortOrder)
       }
     }
